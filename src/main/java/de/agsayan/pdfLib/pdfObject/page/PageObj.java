@@ -1,18 +1,26 @@
 package de.agsayan.pdfLib.pdfObject.page;
 
-import java.util.ArrayList;
-
 import de.agsayan.pdfLib.pdfObject.PDFObject;
 import de.agsayan.pdfLib.pdfObject.page.streamObj.ImageObject;
 import de.agsayan.pdfLib.pdfObject.page.streamObj.StreamObj;
 import de.agsayan.pdfLib.pdfObject.page.streamObj.TextObject;
+import java.util.ArrayList;
 
 public class PageObj extends PDFObject {
 
   public enum PageFormat {
-    A4,
-    A5,
-    A6;
+    A4(765, 630),
+    // must be adjusted
+    A5(0, 0),
+    A6(0, 0);
+
+    public final int pageWidth;
+    public final int pageHeight;
+
+    private PageFormat(int pageHeight, int pageWidth) {
+      this.pageHeight = pageHeight;
+      this.pageWidth = pageWidth;
+    }
   }
 
   public final String a4Format = "a4";
@@ -25,21 +33,17 @@ public class PageObj extends PDFObject {
   private String content;
   int imgPos;
   ArrayList<String> imgRefs = new ArrayList<>();
-  PageFormat PageFormat;
+  PageFormat pageFormat;
   private ArrayList<StreamObj> streamObjects = new ArrayList<>();
   private String parentReference;
-  private String contentReference;
 
-  public PageObj(String pageFormat) {
-
-    if (pageFormat.equals(a4Format)) {
-      PageFormat = PageFormat.A4;
-      setPageSize(765, 630);
-    }
+  public PageObj(PageFormat pageFormat) {
+    this.pageFormat = pageFormat;
+    setPageSize(this.pageFormat.pageHeight, this.pageFormat.pageWidth);
   }
 
   private String getMediaBox() {
-    if (PageFormat.equals(PageFormat.A4)) {
+    if (this.pageFormat.equals(PageFormat.A4)) {
       return "\n";
     } else {
       return "/MediaBox[0 0 " + getPageWidth() + " " + getHeight() + "]\n";
@@ -52,8 +56,7 @@ public class PageObj extends PDFObject {
     for (String font : fonts)
       fontDic += font + "\n";
 
-    this.dic =
-        "    <<\n"
+    this.dic = "    <<\n"
         + "/Type /Page\n"
         + "/Contents " + contentReference +
         " 0 R\n" // Referenz zu den Contents vom Page
@@ -69,8 +72,7 @@ public class PageObj extends PDFObject {
 
   public void setDic(int contentReference) {
     String fonts = "";
-    this.dic =
-        "    <<\n"
+    this.dic = "    <<\n"
         + "         /Type /Page\n"
         + "         /Contents " + contentReference +
         " 0 R\n" // Referenz zu den Contents vom Page
@@ -103,28 +105,28 @@ public class PageObj extends PDFObject {
   public void setDictionary(String key, StreamObj objects) {
     int fontReference = 0;
     if (key.equals("Font")) {
-      TextObject txtObj = (TextObject)objects;
+      TextObject txtObj = (TextObject) objects;
       String coursive = "";
       if (txtObj.getTextFont().equals("Times-Roman")) {
         coursive = "Italic";
       } else {
         coursive = "Oblique";
       }
-      setFontMode((TextObject)objects, coursive);
+      setFontMode((TextObject) objects, coursive);
     } else {
-      setImgRef((ImageObject)objects);
+      setImgRef((ImageObject) objects);
     }
   }
 
   private void setFont(TextObject txtObj) {
     switch (txtObj.getTextFont()) {
-    case "Times-Roman":
-      // setFontMode(txtObj);
-      break;
-    case "Helvetica":
-      break;
-    default:
-      break;
+      case "Times-Roman":
+        // setFontMode(txtObj);
+        break;
+      case "Helvetica":
+        break;
+      default:
+        break;
     }
   }
 
@@ -133,8 +135,8 @@ public class PageObj extends PDFObject {
     if (imgRefs.isEmpty()) {
       imgPos = fonts.size();
       fonts.add(">>\n/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]\n"
-                + "/XObject <<\n"
-                + ">>");
+          + "/XObject <<\n"
+          + ">>");
 
       imgRefs.add("/I" + reference + " " + img.getObjectPos() + " 0 R\n");
     } else {
@@ -145,7 +147,7 @@ public class PageObj extends PDFObject {
       }
 
       fonts.set(imgPos, ">>\n/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]\n"
-                            + "/XObject <<\n" + referr + ">>");
+          + "/XObject <<\n" + referr + ">>");
     }
     img.setReference("/I" + reference);
   }
@@ -168,12 +170,12 @@ public class PageObj extends PDFObject {
     }
 
     fonts.add("                         /F" + fontReference + "\n"
-              + "                             <<\n"
-              + "                                 /Type /Font\n"
-              + "                                 /BaseFont /" + font + "\n"
-              + "                                 /Subtype /Type1\n"
-              + "                            >>\n"
-              + "");
+        + "                             <<\n"
+        + "                                 /Type /Font\n"
+        + "                                 /BaseFont /" + font + "\n"
+        + "                                 /Subtype /Type1\n"
+        + "                            >>\n"
+        + "");
 
     txtObj.setFontReference(fontReference);
   }
@@ -196,15 +198,21 @@ public class PageObj extends PDFObject {
     this.pageHeight = pageHeight;
   }
 
-  public int getPageWidth() { return pageWidth; }
+  public int getPageWidth() {
+    return pageWidth;
+  }
 
-  public int getHeight() { return pageHeight; }
+  public int getHeight() {
+    return pageHeight;
+  }
 
   public void addStreamContent(StreamObj streamObj) {
     streamObjects.add(streamObj);
   }
 
-  public String getParentReference() { return parentReference; }
+  public String getParentReference() {
+    return parentReference;
+  }
 
   public void setParentReference(String parentReference) {
     this.parentReference = parentReference;

@@ -1,8 +1,5 @@
 package de.agsayan.pdfLib.pdfObject;
 
-import de.agsayan.pdfLib.pdfObject.page.PageObj;
-import de.agsayan.pdfLib.pdfObject.page.streamObj.ImageObject;
-import de.agsayan.pdfLib.pdfObject.page.streamObj.TextObject;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -12,8 +9,14 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.regex.Pattern;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import de.agsayan.pdfLib.pdfObject.page.PageObj;
+import de.agsayan.pdfLib.pdfObject.page.PageObj.PageFormat;
+import de.agsayan.pdfLib.pdfObject.page.streamObj.ImageObject;
+import de.agsayan.pdfLib.pdfObject.page.streamObj.TextObject;
 
 public class PDF {
 
@@ -33,8 +36,8 @@ public class PDF {
       JSONObject obj = array.getJSONObject(i);
       JSONArray objectList = obj.getJSONArray("objectList");
 
-      String pageFormat = obj.getString("pageFormat");
-      PageObj page = new PageObj(pageFormat);
+      String pageFormat = obj.getString("pageFormat").toUpperCase();
+      PageObj page = new PageObj(PageFormat.valueOf(pageFormat));
       page.setParentReference("2 0 R");
 
       for (int x = 0; x < objectList.length(); x++) {
