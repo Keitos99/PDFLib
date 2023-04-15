@@ -15,7 +15,7 @@
                 "pairKerning": "true",
                 "pageNr": 1,
                 "textAngle": 0,
-                "text": "sdASDASDF",
+                "text": "Hello World!",
                 "borderBottom": "true",
                 "height": 49.735,
                 "bottomFrameWidth": 0,
@@ -32,7 +32,7 @@
                 "lineBreak": "true",
                 "borderRight": "true",
                 "textAlignment": "left",
-                "textBold": "false",
+                "textBold": "true",
                 "name": "text",
                 "width": 61.376,
                 "rightFrameWidth": 0,
@@ -121,7 +121,7 @@
             {
                 "positionY": 120,
                 "pageNr": 1,
-                "imgPath": "/home/agsayan/Pictures/Backrounds/wallpapers/0205.jpg",
+                "imgPath": "/home/agsayan/Documents/Workspace/Github/PDFLib/src/main/resources/images/0038.jpg",
                 "name": "img",
                 "width": 200,
                 "objectID": 2,
@@ -182,7 +182,7 @@
             {
                 "positionY": 120,
                 "pageNr": 1,
-                "imgPath": "/home/agsayan/Pictures/Backrounds/wallpapers/0215.jpg",
+                "imgPath": "/home/agsayan/Documents/Workspace/Github/PDFLib/src/main/resources/images/0119.jpg",
                 "name": "img",
                 "width": 200,
                 "objectID": 2,
@@ -192,7 +192,7 @@
             {
                 "positionY": 250,
                 "pageNr": 1,
-                "imgPath": "/home/agsayan/Pictures/Backrounds/wallpapers/0210.jpg",
+                "imgPath": "/home/agsayan/Documents/Workspace/Github/PDFLib/src/main/resources/images/0038.jpg",
                 "name": "img",
                 "width": 200,
                 "objectID": 3,
@@ -202,7 +202,7 @@
             {
                 "positionY": 250,
                 "pageNr": 1,
-                "imgPath": "/home/agsayan/Pictures/Backrounds/wallpapers/0018.jpg",
+                "imgPath": "/home/agsayan/Documents/Workspace/Github/PDFLib/src/main/resources/images/0119.jpg",
                 "name": "img",
                 "width": 300,
                 "objectID": 4,
@@ -212,7 +212,7 @@
             {
                 "positionY": 100,
                 "pageNr": 1,
-                "imgPath": "/home/agsayan/Pictures/Backrounds/wallpapers/0300.jpg",
+                "imgPath": "/home/agsayan/Documents/Workspace/Github/PDFLib/src/main/resources/images/0119.jpg",
                 "name": "img",
                 "width": 100,
                 "objectID": 4,

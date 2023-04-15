@@ -10,7 +10,7 @@ import org.json.JSONTokener;
 
 public class App {
   public static void main(String[] args) throws Exception {
-    URL resourceURL = App.class.getClassLoader().getResource("PDFFile.json");
+    URL resourceURL = App.class.getClassLoader().getResource("PDFWithImage.json");
     String resourceFile = resourceURL.getFile();
     String generatedPdfFile = "/home/agsayan/Downloads/test.pdf";
 

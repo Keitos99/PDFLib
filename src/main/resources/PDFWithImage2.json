@@ -127,7 +127,7 @@
         "objectList": [{
             "positionY": 20,
             "pageNr": 1,
-            "imgPath": "/home/agsayan/Documents/Work/Projects/eclipse-workspace/PDFGeneratorForReal/src/main/resources/useful/0038.jpg",
+            "imgPath": "/home/agsayan/Documents/Workspace/Github/PDFLib/src/main/resources/images/0038.jpg",
             "name": "img",
             "width": 61.376,
             "objectID": 1,
@@ -181,7 +181,7 @@
             {
                 "positionY": 20,
                 "pageNr": 1,
-                "imgPath": "/home/agsayan/Documents/Work/Projects/eclipse-workspace/PDFGeneratorForReal/src/main/resources/useful/0038.jpg",
+                "imgPath": "/home/agsayan/Documents/Workspace/Github/PDFLib/src/main/resources/images/0038.jpg",
                 "name": "img",
                 "width": 61.376,
                 "objectID": 2,
