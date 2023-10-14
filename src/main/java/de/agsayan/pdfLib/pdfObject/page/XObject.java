@@ -1,5 +1,7 @@
 package de.agsayan.pdfLib.pdfObject.page;
 
+import de.agsayan.pdfLib.pdfObject.TypeObjects.DictionaryObject;
+import de.agsayan.pdfLib.pdfObject.TypeObjects.NameObject;
 import de.agsayan.pdfLib.pdfObject.page.streamObj.StreamObj;
 
 public class XObject extends StreamObj {
@@ -11,20 +13,22 @@ public class XObject extends StreamObj {
 
   @Override
   public String buildStream() {
-    return "<<\n"
-        + "/Type /" + type + "\n"
-        + "/Subtype /" + subtype + "\n"
-        + "/Width " + width + "\n"
-        + "/Height " + height + "\n"
-        + "/BitsPerComponent " + bitsPerComponent + "\n"
-        + "/Filter /" + filter + "\n"
-        + "/ColorSpace /" + colorSpace + "\n"
-        + "/Length " + length + "\n"
-        + ">>\n"
-        + "stream\n" +
+    DictionaryObject dictionary = new DictionaryObject();
+    dictionary.put("Type", new NameObject(type));
+    dictionary.put("Subtype", new NameObject(subtype));
+    dictionary.put("Width", width);
+    dictionary.put("Height", height);
+    dictionary.put("BitsPerComponent", bitsPerComponent);
+    dictionary.put("Filter", new NameObject(filter));
+    dictionary.put("ColorSpace", new NameObject(colorSpace));
+    dictionary.put("Length", length);
+
+    String result = dictionary.toString() + "\nstream\n" +
         // content muss hier rein
-        getContent() + "\n"
-        + "endstream\n";
+        getContent() + "\nendstream\n";
+
+    return result;
+      
   }
 
   public void setSubtype(String subtype) { this.subtype = subtype; }

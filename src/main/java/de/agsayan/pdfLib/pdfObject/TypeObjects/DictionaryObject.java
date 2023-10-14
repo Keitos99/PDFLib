@@ -12,6 +12,10 @@ public class DictionaryObject {
   public DictionaryObject() { this.dict = new LinkedHashMap<>(); }
 
   public void put(String key, Object value) {
+      if (value instanceof NameObject) {
+        String t = value.toString();
+        System.err.println("DEBUGPRINT[2]: DictionaryObject.java:16: t=" + t);
+      }
     dict.put(new NameObject(key).toString(), value);
   }
 
@@ -20,7 +24,10 @@ public class DictionaryObject {
     String entries = "";
     for (String key : dict.keySet()) {
       Object value = dict.get(key);
-      String entry = "\t" + key + " " + value + "\n";
+      if (value instanceof NameObject) {
+        String t = value.toString();
+      }
+      String entry = key + " " + value + "\n";
       entries += entry;
     }
     return "<<\n" + entries + ">>";
@@ -35,6 +42,7 @@ public class DictionaryObject {
     subDict.put("/LastItem", "(not!)");
     subDict.put("/VeryLastItem", "(OK)");
 
+    obj.put("Type", "/XObject");
     obj.put("/Type", "/Example");
     obj.put("/Subtype", "/DictionaryExample");
     obj.put("/Version", "0.01");
