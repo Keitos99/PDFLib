@@ -1,7 +1,7 @@
 package de.agsayan.pdfLib.pdfObject;
 
-import de.agsayan.pdfLib.pdfObject.page.PageObj;
-import de.agsayan.pdfLib.pdfObject.page.PageObj.PageFormat;
+import de.agsayan.pdfLib.pdfObject.page.PageObject;
+import de.agsayan.pdfLib.pdfObject.page.PageObject.PageFormat;
 import de.agsayan.pdfLib.pdfObject.page.streamObj.ImageObject;
 import de.agsayan.pdfLib.pdfObject.page.streamObj.TextObject;
 import java.io.File;
@@ -35,7 +35,7 @@ public class PDF {
       JSONArray objectList = obj.getJSONArray("objectList");
 
       String pageFormat = obj.getString("pageFormat").toUpperCase();
-      PageObj page = new PageObj(PageFormat.valueOf(pageFormat));
+      PageObject page = new PageObject(PageFormat.valueOf(pageFormat));
       page.setParentReference("2 0 R");
 
       for (int x = 0; x < objectList.length(); x++) {

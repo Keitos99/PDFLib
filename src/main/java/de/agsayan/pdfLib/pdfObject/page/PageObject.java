@@ -1,12 +1,14 @@
 package de.agsayan.pdfLib.pdfObject.page;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.agsayan.pdfLib.pdfObject.PDFObject;
 import de.agsayan.pdfLib.pdfObject.page.streamObj.ImageObject;
 import de.agsayan.pdfLib.pdfObject.page.streamObj.StreamObj;
 import de.agsayan.pdfLib.pdfObject.page.streamObj.TextObject;
-import java.util.ArrayList;
 
-public class PageObj extends PDFObject {
+public class PageObject extends PDFObject {
 
   public enum PageFormat {
     A4(765, 630),
@@ -39,7 +41,7 @@ public class PageObj extends PDFObject {
   ArrayList<String> imgRefs = new ArrayList<>();
   ArrayList<String> fonts = new ArrayList<>();
 
-  public PageObj(PageFormat pageFormat) {
+  public PageObject(PageFormat pageFormat) {
     this.pageFormat = pageFormat;
     setPageSize(this.pageFormat.pageHeight, this.pageFormat.pageWidth);
   }
@@ -64,14 +66,40 @@ public class PageObj extends PDFObject {
     return dic;
   }
 
-  private String buildResourcesBlock() {
+  private String buildDictionary(List<String> values) {
+    String content = "";
+    for(String value : values)
+      content += value + "\n";
+
+    return "<<\n" + content + ">>\n";
+  }
+
+  private String buildFontDictionary() {
     String fontDic = "";
-    for (String font : fonts)
+    for (String font : fonts) {
       fontDic += font + "\n";
-    return "\n/Resources <<\n" // RES die von den Obj der Page genutzt werden
-        + "/Font <<\n"
-        + "" + fontDic + ">>\n"
-        + ">>\n";
+    }
+    return "/Font " + buildDictionary(fonts);
+  }
+
+  // PDF Reference 9.1
+  private String buildProcedureSet(String referrenceString) {
+    return "\n/ProcSet [/PDF /Text " + GRAYSCALE_IMAGE + " " + COLOR_IMAGE +
+        " " + INDEXED_IMAGE + " ]\n"
+        + "/XObject <<\n" + referrenceString + ">>";
+  }
+
+  // RES die von den Obj der Page genutzt werden
+  private String buildResourcesBlock() {
+    String referrenceString = "";
+    for (String imgRef : imgRefs) {
+      referrenceString += imgRef;
+    }
+    String result = "\n/Resources <<\n" + buildFontDictionary() +
+                    buildProcedureSet(referrenceString) + ">>\n";
+
+    System.out.println(result);
+    return result;
   }
 
   public void addStreamObjects(String key, StreamObj objects) {
@@ -89,27 +117,13 @@ public class PageObj extends PDFObject {
     }
   }
 
-  private String buildProcedureSet(String referrenceString) {
-    return ">>\n/ProcSet [/PDF /Text " + GRAYSCALE_IMAGE + " " + COLOR_IMAGE +
-        " " + INDEXED_IMAGE + " ]\n"
-        + "/XObject <<\n" + referrenceString + ">>";
-  }
-
   private void addImage(ImageObject img) {
     int referenceIndex = imgRefs.size();
     if (imgRefs.isEmpty()) {
       imgPos = fonts.size();
-      fonts.add(buildProcedureSet(""));
-
       imgRefs.add("/I" + referenceIndex + " " + img.getObjectPos() + " 0 R\n");
     } else {
       imgRefs.add("/I" + referenceIndex + " " + img.getObjectPos() + " 0 R\n");
-      String referrenceString = "";
-      for (String imgRef : imgRefs) {
-        referrenceString += imgRef;
-      }
-
-      fonts.set(imgPos, buildProcedureSet(referrenceString));
     }
     img.setReference("/I" + referenceIndex);
   }

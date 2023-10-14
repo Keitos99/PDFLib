@@ -1,7 +1,7 @@
 package de.agsayan.pdfLib.pdfObject.page.streamObj;
 
 import de.agsayan.pdfLib.pdfObject.PDFObject;
-import de.agsayan.pdfLib.pdfObject.page.PageObj;
+import de.agsayan.pdfLib.pdfObject.page.PageObject;
 
 public abstract class StreamObj extends PDFObject {
 
@@ -17,7 +17,7 @@ public abstract class StreamObj extends PDFObject {
   protected float xPos;
   protected float yPos;
 
-  public void setPosition(PageObj page, float x, float y) {
+  public void setPosition(PageObject page, float x, float y) {
     this.xPos = milimeterToPtsConverter(x);
     this.yPos = page.getHeight() - milimeterToPtsConverter(y);
   }
