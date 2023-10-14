@@ -86,7 +86,13 @@ public class ImageObject extends GrahicsObject {
 
   public void setWidth(float width) { this.width = width; }
 
-  public void setReference(String reference) { this.reference = reference; }
+  public void setReference(int reference) { 
+    this.reference = "/I" + reference; 
+  }
+
+  public String getReference() {
+      return reference;
+  }
 
   public int getObjectPos() { return objectPos; }
 

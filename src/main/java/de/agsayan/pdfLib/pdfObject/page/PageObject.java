@@ -1,12 +1,14 @@
 package de.agsayan.pdfLib.pdfObject.page;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.agsayan.pdfLib.pdfObject.PDFObject;
+import de.agsayan.pdfLib.pdfObject.TypeObjects.ArrayObject;
+import de.agsayan.pdfLib.pdfObject.TypeObjects.DictionaryObject;
 import de.agsayan.pdfLib.pdfObject.page.streamObj.ImageObject;
 import de.agsayan.pdfLib.pdfObject.page.streamObj.StreamObj;
 import de.agsayan.pdfLib.pdfObject.page.streamObj.TextObject;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PageObject extends PDFObject {
 
@@ -50,55 +52,68 @@ public class PageObject extends PDFObject {
     if (this.pageFormat.equals(PageFormat.A4)) {
       return "\n";
     } else {
-      return "/MediaBox[0 0 " + getPageWidth() + " " + getHeight() + "]\n";
+      ArrayObject arrayObject = new ArrayObject();
+      arrayObject.add(0);
+      arrayObject.add(0);
+      arrayObject.add(getPageWidth());
+      arrayObject.add(getHeight());
+      return "/MediaBox " + arrayObject + "\n";
     }
   }
 
   public String getDic(int contentReference) {
-    String dic = "    <<\n"
-                 + "/Type /Page\n"
-                 + "/Contents " + contentReference +
-                 " 0 R\n" // Referenz zu den Contents vom Page
-                 + "/Parent " + getParentReference() + buildResourcesBlock() +
-                 buildMediaBox() // For sizing the pdf page
-                 + "     >>\n";
-    ;
-    return dic;
+    String contentReferenceString = "/Contents " + contentReference + " 0 R";
+    return buildDictionary(
+        "obj", "/Type /Page",
+        contentReferenceString, // Referenz zu den Contents vom Page
+        getParentReference(),   // parent referenc
+        buildResourcesBlock(),  // ressource block
+        buildMediaBox()         // For sizing the pdf page
+    );
   }
 
-  private String buildDictionary(List<String> values) {
+  private String buildDictionary(String key, String... values) {
+    if (key.equals("obj")) {
+      key = "";
+    }
     String content = "";
-    for(String value : values)
+    for (String value : values)
       content += value + "\n";
 
-    return "<<\n" + content + ">>\n";
+    return key + " "
+        + "<<\n" + content + ">>\n";
   }
+
 
   private String buildFontDictionary() {
-    String fontDic = "";
-    for (String font : fonts) {
-      fontDic += font + "\n";
-    }
-    return "/Font " + buildDictionary(fonts);
+    return buildDictionary("/Font", fonts.toArray(new String[0]));
   }
 
-  // PDF Reference 9.1
-  private String buildProcedureSet(String referrenceString) {
-    return "\n/ProcSet [/PDF /Text " + GRAYSCALE_IMAGE + " " + COLOR_IMAGE +
-        " " + INDEXED_IMAGE + " ]\n"
-        + "/XObject <<\n" + referrenceString + ">>";
-  }
-
-  // RES die von den Obj der Page genutzt werden
-  private String buildResourcesBlock() {
+  private String buildXObject() {
     String referrenceString = "";
     for (String imgRef : imgRefs) {
       referrenceString += imgRef;
     }
-    String result = "\n/Resources <<\n" + buildFontDictionary() +
-                    buildProcedureSet(referrenceString) + ">>\n";
+    return buildDictionary("/XObject", referrenceString);
+  }
 
-    System.out.println(result);
+  // PDF Reference 9.1
+  private String buildProcedureSet() {
+    ArrayObject array = new ArrayObject();
+    array.add("/PDF");
+    array.add("/TEXT");
+    array.add(GRAYSCALE_IMAGE);
+    array.add(COLOR_IMAGE);
+    array.add(INDEXED_IMAGE);
+
+    return "/ProcSet " + array + buildXObject();
+  }
+
+  // RES die von den Obj der Page genutzt werden
+  // PDFReference 1.4: 3.7.2
+  private String buildResourcesBlock() {
+    String result = buildDictionary("/Resources", buildFontDictionary(),
+                                    buildProcedureSet() + buildXObject());
     return result;
   }
 
@@ -119,53 +134,33 @@ public class PageObject extends PDFObject {
 
   private void addImage(ImageObject img) {
     int referenceIndex = imgRefs.size();
-    if (imgRefs.isEmpty()) {
-      imgPos = fonts.size();
-      imgRefs.add("/I" + referenceIndex + " " + img.getObjectPos() + " 0 R\n");
-    } else {
-      imgRefs.add("/I" + referenceIndex + " " + img.getObjectPos() + " 0 R\n");
-    }
-    img.setReference("/I" + referenceIndex);
+    img.setReference(referenceIndex);
+    imgRefs.add(img.getReference() + " " + img.getObjectPos() + " 0 R\n");
   }
 
   private void addFont(TextObject txtObj, String coursive) {
-    String font = txtObj.getTextFont();
     int fontReference = fonts.size();
+    FontObject fontObject = new FontObject(fontReference);
 
-    if (txtObj.getTextFont().equals("Times-Roman"))
-      font = "Times";
+    fontObject.setFontName(txtObj.getTextFont());
+    fontObject.setBold(txtObj.isBold());
+    fontObject.setCursive(txtObj.isCursive());
 
-    if (txtObj.isBold() && txtObj.isCursive()) {
-      font += "-Bold" + coursive;
-    } else if (txtObj.isBold()) {
-      font += "-Bold";
-    } else if (txtObj.isCursive()) {
-      font += "-" + coursive;
-    } else if (font.equals("Times")) {
-      font += "-Roman";
-    }
-
-    fonts.add("                         /F" + fontReference + "\n"
-              + "                             <<\n"
-              + "                                 /Type /Font\n"
-              + "                                 /BaseFont /" + font + "\n"
-              + "                                 /Subtype /Type1\n"
-              + "                            >>\n");
-
-    txtObj.setFontReference(fontReference);
+    txtObj.setFontReference(fontObject.getFontReference());
+    fonts.add(fontObject.toString());
   }
 
-  public String generateStream() {
+  private String buildStream() {
     String streamContent = "";
     for (StreamObj streamObject : streamObjects) {
       streamContent += streamObject.buildStream();
     }
-
-    return "   <<\n"
-        + "      /Length 100\n"
-        + "      >>\n"
-        + "     stream\n" + streamContent + "\n"
+    return "     stream\n" + streamContent + "\n"
         + "     endstream\n";
+  }
+
+  public String generateStream() {
+    return buildDictionary("obj", "/Length 100") + buildStream();
   }
 
   public void setPageSize(int pageHeight, int pageWidth) {
@@ -181,7 +176,7 @@ public class PageObject extends PDFObject {
     streamObjects.add(streamObj);
   }
 
-  public String getParentReference() { return parentReference; }
+  public String getParentReference() { return "/Parent " + parentReference; }
 
   public void setParentReference(String parentReference) {
     this.parentReference = parentReference;

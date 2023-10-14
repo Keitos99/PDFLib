@@ -1,28 +1,71 @@
 package de.agsayan.pdfLib.pdfObject.page;
 
+import de.agsayan.pdfLib.pdfObject.TypeObjects.DictionaryObject;
+import de.agsayan.pdfLib.pdfObject.TypeObjects.NameObject;
+import javax.sound.sampled.AudioFileFormat.Type;
+
 public class FontObject extends ResourceObject {
+
+  private final String TYPE = "/Font";
   private int fontReference;
   private String fontName;
-  private String fontType;
+  private boolean isBold;
+  private boolean isCursive;
+  private String cursiveString = ""; // TODO: this a stupid way to do it
 
   public FontObject(int fontReference) { this.fontReference = fontReference; }
 
-  public String getFont() {
-    return "/F" + getFontReference() + "\n"
-        + "   <<\n"
-        + "   /Type /Font\n"
-        + "   /BaseFont /+" + getFontName() + "\n"
-        + "   /Subtype /Type1\n"
-        + "   >>\n";
+  public int getFontReference() { return fontReference; }
+
+  public void setFontReference(int fontReference) {
+    this.fontReference = fontReference;
   }
 
-  public String getFontName() { return fontName; }
+  public String getFontName() {
+    // typographical emphasis
+    String font = "";
+    if (isBold()) {
+      font += "-Bold";
+    }
+    if (isCursive()) {
+      font += "-" + cursiveString;
+    }
 
-  public void setFontName(String fontName) { this.fontName = fontName; }
+    return fontName + font;
+  }
 
-  public String getFontType() { return fontType; }
+  public void setFontName(String fontName) {
 
-  public void setFontType(String fontType) { this.fontType = fontType; }
+    if (fontName.equals("Times-Roman")) {
+      fontName = "Times";
+      cursiveString = "Italic";
+      this.fontName = fontName;
+      return;
+    }
+    this.fontName = fontName;
+    cursiveString = "Oblique";
+  }
 
-  public int getFontReference() { return fontReference; }
+  public boolean isBold() { return isBold; }
+
+  public void setBold(boolean isBold) { this.isBold = isBold; }
+
+  public boolean isCursive() { return isCursive; }
+
+  public void setCursive(boolean isCursive) { this.isCursive = isCursive; }
+
+  @Override
+  public String toString() {
+    String result = new NameObject("F" + getFontReference()).toString();
+
+
+    DictionaryObject items = new DictionaryObject();
+    DictionaryObject item = new DictionaryObject();
+
+    items.put("Type", TYPE);
+    items.put("BaseFont", new NameObject(getFontName()));
+    items.put("Subtype", "Type1");
+    result = result + " " + items.toString();
+    return result;
+  }
 }

@@ -1,5 +1,9 @@
 package de.agsayan.pdfLib.pdfObject;
 
+import de.agsayan.pdfLib.pdfObject.TypeObjects.ArrayObject;
+import de.agsayan.pdfLib.pdfObject.TypeObjects.DictionaryObject;
+import de.agsayan.pdfLib.pdfObject.TypeObjects.IndirectObject;
+import de.agsayan.pdfLib.pdfObject.TypeObjects.NameObject;
 import de.agsayan.pdfLib.pdfObject.page.PageObject;
 import de.agsayan.pdfLib.pdfObject.page.PageObject.PageFormat;
 import de.agsayan.pdfLib.pdfObject.page.streamObj.ImageObject;
@@ -10,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.regex.Pattern;
@@ -26,11 +31,13 @@ public class PDF {
   ArrayList<String> pdfObjects = new ArrayList<>();
 
   public void createPDF(JSONArray array, String pdfPath) throws IOException {
+    int pag = 0;
     os = new FileOutputStream(new File(pdfPath));
     addCatalog();
     addPagesCollection(array.length());
 
     for (int i = 0; i < array.length(); i++) {
+      pag += 1;
       JSONObject obj = array.getJSONObject(i);
       JSONArray objectList = obj.getJSONArray("objectList");
 
@@ -45,44 +52,44 @@ public class PDF {
         float xPos = object.getFloat("positionX");
         float yPos = object.getFloat("positionY");
         switch (objectType) {
-          case "text":
-            int textSize = object.getInt("textSize");
-            boolean isCursive = object.getBoolean("textCursive");
-            boolean isBold = object.getBoolean("textBold");
-            boolean isUnderlined = object.getBoolean("textUnderlined");
-            String textFont = object.getString("textFont");
-            String textColor = object.getString("textColor");
-            String text = object.getString("text");
+        case "text":
+          int textSize = object.getInt("textSize");
+          boolean isCursive = object.getBoolean("textCursive");
+          boolean isBold = object.getBoolean("textBold");
+          boolean isUnderlined = object.getBoolean("textUnderlined");
+          String textFont = object.getString("textFont");
+          String textColor = object.getString("textColor");
+          String text = object.getString("text");
 
-            TextObject txtObj = new TextObject();
-            txtObj.setText(text, textSize);
-            txtObj.setPosition(page, xPos, yPos);
-            txtObj.setCursive(isCursive);
-            txtObj.setBold(isBold);
-            txtObj.setUnderlined(isUnderlined);
-            txtObj.setTextColor(textColor);
-            txtObj.setTextFont(textFont);
+          TextObject txtObj = new TextObject();
+          txtObj.setText(text, textSize);
+          txtObj.setPosition(page, xPos, yPos);
+          txtObj.setCursive(isCursive);
+          txtObj.setBold(isBold);
+          txtObj.setUnderlined(isUnderlined);
+          txtObj.setTextColor(textColor);
+          txtObj.setTextFont(textFont);
 
-            page.addStreamObjects("Font", txtObj);
-            page.addStreamContent(txtObj);
-            break;
+          page.addStreamObjects("Font", txtObj);
+          page.addStreamContent(txtObj);
+          break;
 
-          case "img":
-            String imgPath = object.getString("imgPath");
-            float height = object.getFloat("height");
-            float width = object.getFloat("width");
+        case "img":
+          String imgPath = object.getString("imgPath");
+          float height = object.getFloat("height");
+          float width = object.getFloat("width");
 
-            ImageObject img = new ImageObject(imgPath);
-            img.setPosition(page, xPos, yPos);
-            img.setHeigth(height);
-            img.setWidth(width);
+          ImageObject img = new ImageObject(imgPath);
+          img.setPosition(page, xPos, yPos);
+          img.setHeigth(height);
+          img.setWidth(width);
 
-            // TODO: Warum +1?
-            img.setObjectPos(pdfObjects.size() + 1);
-            page.addStreamObjects("XObject", img);
-            pdfObjects.add(img.embedXObjectWithImg());
-            page.addStreamContent(img);
-            break;
+          // TODO: Warum +1?
+          img.setObjectPos(pdfObjects.size() + 1);
+          page.addStreamObjects("XObject", img);
+          pdfObjects.add(img.embedXObjectWithImg());
+          page.addStreamContent(img);
+          break;
         }
       }
 
@@ -90,11 +97,10 @@ public class PDF {
       pdfObjects.add(page.generateStream() + "\n");
     }
 
-
     setKids();
 
     writeHeader();
-    generateObjs(pdfObjects);
+    writeObjects(pdfObjects);
     writeTrailer(pdfObjects.size());
 
     if (os != null)
@@ -106,6 +112,7 @@ public class PDF {
   private void setKids() {
     int parentObjPosition = 0;
     String kids = "";
+
     for (int t = 0; t < pdfObjects.size(); t++) {
       String object = pdfObjects.get(t);
       if (object.contains("/Page") && !object.contains("/Pages")) {
@@ -115,14 +122,18 @@ public class PDF {
       }
     }
 
-    String parentObj = pdfObjects.get(parentObjPosition).split(Pattern.quote("["))[0] + "[" +
-      kids + "] >>";
+    String parentObj =
+        pdfObjects.get(parentObjPosition).split(Pattern.quote("["))[0] + "[" +
+        kids + "] >>";
+    System.out.println(parentObj);
     pdfObjects.set(parentObjPosition, parentObj);
   }
 
-  private void generateObjs(ArrayList<String> pdfObjects) throws IOException {
+  private void writeObjects(ArrayList<String> pdfObjects) throws IOException {
+    // TODO: use IndirectObject
     for (int i = 0; i < pdfObjects.size(); i++) {
       String beginningObj = (i + 1) + " 0 " + "obj\n";
+
       os.write(beginningObj.getBytes());
 
       if ((pdfObjects.get(i).contains("imgPath"))) {
@@ -146,40 +157,42 @@ public class PDF {
     }
   }
 
-  private void writeHeader() throws IOException {
-    os.write(HEADER.getBytes());
-  }
+  private void writeHeader() throws IOException { os.write(HEADER.getBytes()); }
 
   private void addCatalog() {
-    String catalog = "  <<\n"
-      + "       /Pages 2 0 R\n"
-      + "       /Type /Catalog  >>";
+    DictionaryObject dictionaryObject = new DictionaryObject();
+    dictionaryObject.put("Pages", "2 0 R");
+    dictionaryObject.put("Type", new NameObject("Catalog"));
+
+    String catalog = dictionaryObject.toString();
     pdfObjects.add(catalog);
   }
 
   private void addPagesCollection(int count) {
-    String childs = "[";
+    DictionaryObject dictionary = new DictionaryObject();
+    ArrayObject array = new ArrayObject();
     int t = 3;
 
     for (int i = 0; i < count; i++) {
-      childs += " " + (i + t) + " 0 R";
+      array.add((i + t));
+      array.add(0);
+      array.add("R");
       t++;
     }
-    childs += "]";
-    String pagesDic = "  <<\n"
-      + "     /Type /Pages\n"
-      + "     /Count " + count + "\n"
-      + "     /Kids " + childs + "  >>";
-    pdfObjects.add(pagesDic);
+
+    dictionary.put("Type", new NameObject("Pages"));
+    dictionary.put("Count", count);
+    dictionary.put("Kids", array);
+
+    pdfObjects.add(dictionary.toString());
   }
 
   public void writeTrailer(int size) throws IOException {
-    String trailer = "trailer\n"
-      + "  <<\n"
-      + "    /Root 1 0 R\n"
-      + "    /Size " + size + "\n"
-      + "  >>\n"
-      + "%%EOF";
+    DictionaryObject dictionary = new DictionaryObject();
+    dictionary.put("Root", "1 0 R");
+    dictionary.put("Size", size);
+
+    String trailer = "trailer\n" + dictionary + "\n%%EOF";
     os.write(trailer.getBytes());
   }
 }

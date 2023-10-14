@@ -4,5 +4,5 @@ public class PDFObject {
 
   PDFReference reference = new PDFReference();
 
-  public PDFReference getReference() { return reference; }
+  public PDFReference getPDFReference() { return reference; }
 }
