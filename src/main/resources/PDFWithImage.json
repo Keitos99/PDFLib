@@ -119,10 +119,10 @@
                 "topFrameWidth": 0
             },
             {
+                "name": "img",
                 "positionY": 120,
                 "pageNr": 1,
                 "imgPath": "/home/agsayan/Documents/Workspace/Github/PDFLib/src/main/resources/images/0038.jpg",
-                "name": "img",
                 "width": 200,
                 "objectID": 2,
                 "height": 200,
@@ -180,10 +180,10 @@
                 "topFrameWidth": 0
             },
             {
+                "name": "img",
                 "positionY": 120,
                 "pageNr": 1,
                 "imgPath": "/home/agsayan/Documents/Workspace/Github/PDFLib/src/main/resources/images/0119.jpg",
-                "name": "img",
                 "width": 200,
                 "objectID": 2,
                 "height": 200,

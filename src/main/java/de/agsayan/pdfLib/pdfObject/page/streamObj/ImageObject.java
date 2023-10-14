@@ -46,7 +46,7 @@ public class ImageObject extends GrahicsObject {
   }
 
   // zur zeit nur jpg format
-  public String embedXObjectWithImg(String imgContent) throws IOException {
+  public String embedXObjectWithImg() throws IOException {
     File imgFile = new File(imgPath);
     BufferedImage bufferedImg = ImageIO.read(imgFile);
 

@@ -24,25 +24,27 @@ public class PageObj extends PDFObject {
   }
 
   public final String a4Format = "a4";
+  private final String GRAYSCALE_IMAGE = "/IMAGEB";
+  private final String COLOR_IMAGE = "/IMAGEC";
+  private final String INDEXED_IMAGE = "/IMAGEI";
 
   // ungefahr richtiger DinA4 size
   private int pageWidth = 630;
   private int pageHeight = 765;
 
-  private String dic;
-  private String content;
   int imgPos;
-  ArrayList<String> imgRefs = new ArrayList<>();
   PageFormat pageFormat;
-  private ArrayList<StreamObj> streamObjects = new ArrayList<>();
   private String parentReference;
+  private ArrayList<StreamObj> streamObjects = new ArrayList<>();
+  ArrayList<String> imgRefs = new ArrayList<>();
+  ArrayList<String> fonts = new ArrayList<>();
 
   public PageObj(PageFormat pageFormat) {
     this.pageFormat = pageFormat;
     setPageSize(this.pageFormat.pageHeight, this.pageFormat.pageWidth);
   }
 
-  private String getMediaBox() {
+  private String buildMediaBox() {
     if (this.pageFormat.equals(PageFormat.A4)) {
       return "\n";
     } else {
@@ -51,108 +53,68 @@ public class PageObj extends PDFObject {
   }
 
   public String getDic(int contentReference) {
+    String dic = "    <<\n"
+                 + "/Type /Page\n"
+                 + "/Contents " + contentReference +
+                 " 0 R\n" // Referenz zu den Contents vom Page
+                 + "/Parent " + getParentReference() + buildResourcesBlock() +
+                 buildMediaBox() // For sizing the pdf page
+                 + "     >>\n";
+    ;
+    return dic;
+  }
 
+  private String buildResourcesBlock() {
     String fontDic = "";
     for (String font : fonts)
       fontDic += font + "\n";
-
-    this.dic = "    <<\n"
-        + "/Type /Page\n"
-        + "/Contents " + contentReference +
-        " 0 R\n" // Referenz zu den Contents vom Page
-        + "/Parent " + getParentReference() +
-        "\n/Resources <<\n" // RES die von den Obj der Page genutzt werden
+    return "\n/Resources <<\n" // RES die von den Obj der Page genutzt werden
         + "/Font <<\n"
         + "" + fontDic + ">>\n"
-        + ">>\n" + getMediaBox() // For sizing the pdf page
-        + "     >>\n";
-    ;
-    return this.dic;
+        + ">>\n";
   }
 
-  public void setDic(int contentReference) {
-    String fonts = "";
-    this.dic = "    <<\n"
-        + "         /Type /Page\n"
-        + "         /Contents " + contentReference +
-        " 0 R\n" // Referenz zu den Contents vom Page
-        + "         /Parent 2 0 R"
-        + "         /Resources\n" // RES die von den Obj der Page genutzt werden
-        + "             <<\n"
-        + "                  /Font\n"
-        + "                     <<\n"
-        + "                         /F1\n"
-        + "                             <<\n"
-        + "                                 /Type / Font\n"
-        + "                                 /BaseFont /Times-Italic\n"
-        + "                                 /Subtype /Type1\n"
-        + "                              >>\n"
-        + "                        /F2\n"
-        + "                             <<\n"
-        + "                                 /Type / Font\n"
-        + "                                 /BaseFont /Helvetica-Bold\n"
-        + "                                 /Subtype /Type1\n"
-        + "                            >>\n"
-        + "                     >>\n"
-        + "             >>\n"
-        + "      /MediaBox [0 0 " + getPageWidth() + " " + getHeight() +
-        "]" // For sizing the pdf page
-        + "     >>\n";
-  }
-
-  ArrayList<String> fonts = new ArrayList<>();
-
-  public void setDictionary(String key, StreamObj objects) {
-    int fontReference = 0;
+  public void addStreamObjects(String key, StreamObj objects) {
     if (key.equals("Font")) {
-      TextObject txtObj = (TextObject) objects;
+      TextObject txtObj = (TextObject)objects;
       String coursive = "";
       if (txtObj.getTextFont().equals("Times-Roman")) {
         coursive = "Italic";
       } else {
         coursive = "Oblique";
       }
-      setFontMode((TextObject) objects, coursive);
+      addFont((TextObject)objects, coursive);
     } else {
-      setImgRef((ImageObject) objects);
+      addImage((ImageObject)objects);
     }
   }
 
-  private void setFont(TextObject txtObj) {
-    switch (txtObj.getTextFont()) {
-      case "Times-Roman":
-        // setFontMode(txtObj);
-        break;
-      case "Helvetica":
-        break;
-      default:
-        break;
-    }
+  private String buildProcedureSet(String referrenceString) {
+    return ">>\n/ProcSet [/PDF /Text " + GRAYSCALE_IMAGE + " " + COLOR_IMAGE +
+        " " + INDEXED_IMAGE + " ]\n"
+        + "/XObject <<\n" + referrenceString + ">>";
   }
 
-  private void setImgRef(ImageObject img) {
-    int reference = imgRefs.size();
+  private void addImage(ImageObject img) {
+    int referenceIndex = imgRefs.size();
     if (imgRefs.isEmpty()) {
       imgPos = fonts.size();
-      fonts.add(">>\n/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]\n"
-          + "/XObject <<\n"
-          + ">>");
+      fonts.add(buildProcedureSet(""));
 
-      imgRefs.add("/I" + reference + " " + img.getObjectPos() + " 0 R\n");
+      imgRefs.add("/I" + referenceIndex + " " + img.getObjectPos() + " 0 R\n");
     } else {
-      imgRefs.add("/I" + reference + " " + img.getObjectPos() + " 0 R\n");
-      String referr = "";
+      imgRefs.add("/I" + referenceIndex + " " + img.getObjectPos() + " 0 R\n");
+      String referrenceString = "";
       for (String imgRef : imgRefs) {
-        referr += imgRef;
+        referrenceString += imgRef;
       }
 
-      fonts.set(imgPos, ">>\n/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]\n"
-          + "/XObject <<\n" + referr + ">>");
+      fonts.set(imgPos, buildProcedureSet(referrenceString));
     }
-    img.setReference("/I" + reference);
+    img.setReference("/I" + referenceIndex);
   }
 
-  private void setFontMode(TextObject txtObj, String coursive) {
+  private void addFont(TextObject txtObj, String coursive) {
     String font = txtObj.getTextFont();
     int fontReference = fonts.size();
 
@@ -170,12 +132,11 @@ public class PageObj extends PDFObject {
     }
 
     fonts.add("                         /F" + fontReference + "\n"
-        + "                             <<\n"
-        + "                                 /Type /Font\n"
-        + "                                 /BaseFont /" + font + "\n"
-        + "                                 /Subtype /Type1\n"
-        + "                            >>\n"
-        + "");
+              + "                             <<\n"
+              + "                                 /Type /Font\n"
+              + "                                 /BaseFont /" + font + "\n"
+              + "                                 /Subtype /Type1\n"
+              + "                            >>\n");
 
     txtObj.setFontReference(fontReference);
   }
@@ -198,21 +159,15 @@ public class PageObj extends PDFObject {
     this.pageHeight = pageHeight;
   }
 
-  public int getPageWidth() {
-    return pageWidth;
-  }
+  public int getPageWidth() { return pageWidth; }
 
-  public int getHeight() {
-    return pageHeight;
-  }
+  public int getHeight() { return pageHeight; }
 
   public void addStreamContent(StreamObj streamObj) {
     streamObjects.add(streamObj);
   }
 
-  public String getParentReference() {
-    return parentReference;
-  }
+  public String getParentReference() { return parentReference; }
 
   public void setParentReference(String parentReference) {
     this.parentReference = parentReference;
