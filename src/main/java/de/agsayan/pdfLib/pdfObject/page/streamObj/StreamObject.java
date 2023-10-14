@@ -3,7 +3,7 @@ package de.agsayan.pdfLib.pdfObject.page.streamObj;
 import de.agsayan.pdfLib.pdfObject.PDFObject;
 import de.agsayan.pdfLib.pdfObject.page.PageObject;
 
-public abstract class StreamObj extends PDFObject {
+public abstract class StreamObject extends PDFObject {
 
   protected String type;
   protected String subtype;
@@ -27,7 +27,9 @@ public abstract class StreamObj extends PDFObject {
     return (float)(mm * pts);
   }
 
-  public abstract String buildStream();
+  public String buildStream() {
+    return "\nstream\n" + getContent() + "\nendstream\n";
+  }
 
   public String getContent() { return content; }
 

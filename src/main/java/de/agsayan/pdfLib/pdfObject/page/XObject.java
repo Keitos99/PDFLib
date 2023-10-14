@@ -2,9 +2,9 @@ package de.agsayan.pdfLib.pdfObject.page;
 
 import de.agsayan.pdfLib.pdfObject.TypeObjects.DictionaryObject;
 import de.agsayan.pdfLib.pdfObject.TypeObjects.NameObject;
-import de.agsayan.pdfLib.pdfObject.page.streamObj.StreamObj;
+import de.agsayan.pdfLib.pdfObject.page.streamObj.StreamObject;
 
-public class XObject extends StreamObj {
+public class XObject extends StreamObject {
 
   public XObject() {
     type = "XObject";
@@ -23,9 +23,7 @@ public class XObject extends StreamObj {
     dictionary.put("ColorSpace", new NameObject(colorSpace));
     dictionary.put("Length", length);
 
-    String result = dictionary.toString() + "\nstream\n" +
-        // content muss hier rein
-        getContent() + "\nendstream\n";
+    String result = dictionary.toString() + super.buildStream();
 
     return result;
       

@@ -1,6 +1,6 @@
 package de.agsayan.pdfLib.pdfObject.page.streamObj;
 
-public class GrahicsObject extends StreamObj {
+public class GrahicsObject extends StreamObject {
 
     private static final String MovePointer = "m";
     private static final String LINE = "l";

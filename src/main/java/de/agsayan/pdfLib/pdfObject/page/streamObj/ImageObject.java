@@ -34,7 +34,7 @@ public class ImageObject extends GrahicsObject {
     type = "XObject";
     subtype = "Image";
     bitsPerComponent = 8;
-    filter = "DCTDecode";
+    filter = getEncoding();
     colorSpace = "DeviceRGB";
   }
 

@@ -1,14 +1,13 @@
 package de.agsayan.pdfLib.pdfObject.page;
 
+import java.util.ArrayList;
+
 import de.agsayan.pdfLib.pdfObject.PDFObject;
 import de.agsayan.pdfLib.pdfObject.TypeObjects.ArrayObject;
 import de.agsayan.pdfLib.pdfObject.TypeObjects.DictionaryObject;
 import de.agsayan.pdfLib.pdfObject.page.streamObj.ImageObject;
-import de.agsayan.pdfLib.pdfObject.page.streamObj.StreamObj;
+import de.agsayan.pdfLib.pdfObject.page.streamObj.StreamObject;
 import de.agsayan.pdfLib.pdfObject.page.streamObj.TextObject;
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
 
 public class PageObject extends PDFObject {
 
@@ -39,7 +38,7 @@ public class PageObject extends PDFObject {
   int imgPos;
   PageFormat pageFormat;
   private String parentReference;
-  private ArrayList<StreamObj> streamObjects = new ArrayList<>();
+  private ArrayList<StreamObject> streamObjects = new ArrayList<>();
   ArrayList<String> imgRefs = new ArrayList<>();
   ArrayList<String> fonts = new ArrayList<>();
 
@@ -84,7 +83,6 @@ public class PageObject extends PDFObject {
         + "<<\n" + content + ">>\n";
   }
 
-
   private String buildFontDictionary() {
     return buildDictionary("/Font", fonts.toArray(new String[0]));
   }
@@ -117,7 +115,7 @@ public class PageObject extends PDFObject {
     return result;
   }
 
-  public void addStreamObjects(String key, StreamObj objects) {
+  public void addStreamObjects(String key, StreamObject objects) {
     if (key.equals("Font")) {
       TextObject txtObj = (TextObject)objects;
       String coursive = "";
@@ -152,15 +150,17 @@ public class PageObject extends PDFObject {
 
   private String buildStream() {
     String streamContent = "";
-    for (StreamObj streamObject : streamObjects) {
+    for (StreamObject streamObject : streamObjects) {
       streamContent += streamObject.buildStream();
     }
-    return "     stream\n" + streamContent + "\n"
-        + "     endstream\n";
+    return "stream\n" + streamContent + "\n"
+        + " endstream\n";
   }
 
   public String generateStream() {
-    return buildDictionary("obj", "/Length 100") + buildStream();
+    DictionaryObject dictionaryObject = new DictionaryObject();
+    dictionaryObject.put("Length", 100);
+    return dictionaryObject.toString() + buildStream();
   }
 
   public void setPageSize(int pageHeight, int pageWidth) {
@@ -172,7 +172,7 @@ public class PageObject extends PDFObject {
 
   public int getHeight() { return pageHeight; }
 
-  public void addStreamContent(StreamObj streamObj) {
+  public void addStreamContent(StreamObject streamObj) {
     streamObjects.add(streamObj);
   }
 

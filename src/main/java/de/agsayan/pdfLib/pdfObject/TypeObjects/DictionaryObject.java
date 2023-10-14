@@ -14,7 +14,6 @@ public class DictionaryObject {
   public void put(String key, Object value) {
       if (value instanceof NameObject) {
         String t = value.toString();
-        System.err.println("DEBUGPRINT[2]: DictionaryObject.java:16: t=" + t);
       }
     dict.put(new NameObject(key).toString(), value);
   }
