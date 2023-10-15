@@ -29,8 +29,7 @@ public class IndirectObject extends PDFObject {
     else
       content = this.getContent().toString();
 
-    return this.objectNumber + " " + this.generationNumber + " " +
-        START_OBJECT + "\n" + content + "\n" + END_OBJECT;
+    return this.objectNumber + " " + this.generationNumber + " " + START_OBJECT + "\n" + content + "\n" + END_OBJECT;
   }
 
   public int getObjectNumber() { return objectNumber; }

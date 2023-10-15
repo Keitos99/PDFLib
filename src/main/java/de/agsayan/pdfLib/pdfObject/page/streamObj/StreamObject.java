@@ -21,11 +21,11 @@ public abstract class StreamObject extends PDFObject {
   protected final String LENGTH = "LENGTH";
 
   // following are optional
-  private final String FILTER = "Filter"; // array or name
+  private final String FILTER = "Filter";            // array or name
   private final String DECODE_PARMS = "DecodeParms"; // dictionary or name
-  protected String FILE_SPECIFICATION = "F"; // F
-  protected String F_FILTER = "FFilter"; // name or array
-  protected String F_DECODE_PARMS = "FDecodeParms"; // array or dictionary
+  protected String FILE_SPECIFICATION = "F";         // F
+  protected String F_FILTER = "FFilter";             // name or array
+  protected String F_DECODE_PARMS = "FDecodeParms";  // array or dictionary
 
   private String content;
   protected float xPos;
@@ -33,6 +33,7 @@ public abstract class StreamObject extends PDFObject {
 
   public StreamObject() {
     this.streamDictionary = new DictionaryObject<Object>();
+    this.streamDictionary.put(LENGTH, 0); // LENGTH is not optional
   }
 
   public void setPosition(PageObject page, float x, float y) {
@@ -61,7 +62,7 @@ public abstract class StreamObject extends PDFObject {
 
   @Override
   public String toString() {
-    return this.streamDictionary.toString() + "\n"+ buildStream();
+    return this.streamDictionary.toString() + "\n" + buildStream();
   }
 
   public void write(OutputStream os) {

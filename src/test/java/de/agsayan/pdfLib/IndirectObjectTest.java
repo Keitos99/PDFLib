@@ -19,8 +19,16 @@ public class IndirectObjectTest {
     txt.setBold(true);
     txt.setText("Hello World!", 12);
     txt.setPosition(true, 70, 50);
+    txt.setLength(100);
     indirectObject.setContent(txt);
+
     String result = "1 0 obj"
+                    + "\n"
+                    + "<<"
+                    + "\n"
+                    + "/LENGTH 100"
+                    + "\n"
+                    + ">>"
                     + "\n"
                     + "stream"
                     + "\n"
@@ -41,6 +49,5 @@ public class IndirectObjectTest {
                     + "endobj";
 
     assertTrue(indirectObject.toString().equals(result));
-    System.out.println(indirectObject);
   }
 }
