@@ -1,23 +1,18 @@
 package de.agsayan.pdfLib.pdfObject;
 
-import de.agsayan.pdfLib.pdfObject.TypeObjects.ArrayObject;
-import de.agsayan.pdfLib.pdfObject.TypeObjects.DictionaryObject;
-import de.agsayan.pdfLib.pdfObject.TypeObjects.NameObject;
-import de.agsayan.pdfLib.pdfObject.page.PageObject;
-import de.agsayan.pdfLib.pdfObject.page.PageObject.PageFormat;
-import de.agsayan.pdfLib.pdfObject.page.streamObj.ImageObject;
-import de.agsayan.pdfLib.pdfObject.page.streamObj.TextObject;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
-import org.json.JSONArray;
-import org.json.JSONObject;
+
+import de.agsayan.pdfLib.pdfObject.TypeObjects.ArrayObject;
+import de.agsayan.pdfLib.pdfObject.TypeObjects.DictionaryObject;
+import de.agsayan.pdfLib.pdfObject.TypeObjects.NameObject;
+import de.agsayan.pdfLib.pdfObject.page.PageObject;
 
 public class PDF {
 
@@ -74,6 +69,8 @@ public class PDF {
 
       if ((pdfObjects.get(i).contains("imgPath"))) {
         String[] streamParts = pdfObjects.get(i).split("imgPath");
+        System.out.println("0: " + streamParts[0]);
+        System.out.println("1:" + streamParts[1]);
         String imgPath = streamParts[1].split("endstream")[0].replace("\n", "");
         FileInputStream is = new FileInputStream(new File(imgPath));
         os.write(streamParts[0].getBytes());
@@ -82,7 +79,7 @@ public class PDF {
         while ((length = is.read(buffer)) > 0) {
           os.write(buffer, 0, length);
         }
-        os.write(streamParts[1].getBytes());
+        os.write("\nendstream".getBytes());
 
       } else {
         os.write(pdfObjects.get(i).getBytes());
