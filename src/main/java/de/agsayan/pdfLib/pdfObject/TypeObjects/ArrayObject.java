@@ -17,9 +17,7 @@ public class ArrayObject<T> {
 
   public int size() { return items.size(); }
 
-  public Object get(int index) {
-    return items.get(index);
-  }
+  public Object get(int index) { return items.get(index); }
 
   @Override
   public String toString() {
@@ -27,8 +25,6 @@ public class ArrayObject<T> {
     for (Object item : items)
       content += item + " ";
 
-    return "[" + content + "]"
-        + "\n";
+    return "[" + content + "]\n";
   }
-
 }
