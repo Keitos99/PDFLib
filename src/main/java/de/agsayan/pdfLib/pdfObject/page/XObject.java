@@ -16,6 +16,7 @@ public class XObject extends StreamObject {
   protected int height;
   protected int bitsPerComponent;
   protected String filter;
+  protected String type;
 
   public XObject() {
     type = TYPE;

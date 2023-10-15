@@ -1,10 +1,5 @@
 package de.agsayan.pdfLib;
 
-import de.agsayan.pdfLib.pdfObject.PDF;
-import de.agsayan.pdfLib.pdfObject.page.PageObject;
-import de.agsayan.pdfLib.pdfObject.page.PageObject.PageFormat;
-import de.agsayan.pdfLib.pdfObject.page.streamObj.ImageObject;
-import de.agsayan.pdfLib.pdfObject.page.streamObj.TextObject;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -13,35 +8,34 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import de.agsayan.pdfLib.pdfObject.PDF;
+import de.agsayan.pdfLib.pdfObject.TypeObjects.IndirectObject;
+import de.agsayan.pdfLib.pdfObject.page.PageObject;
+import de.agsayan.pdfLib.pdfObject.page.PageObject.PageFormat;
+import de.agsayan.pdfLib.pdfObject.page.streamObj.ImageObject;
+import de.agsayan.pdfLib.pdfObject.page.streamObj.TextObject;
+
 public class App {
   public static void main(String[] args) {
-    TextObject txt = new TextObject();
-    txt.setBold(true);
-    txt.setText("Hello World!", 12);
-    txt.setPosition(true, 70, 50);
-    System.out.println(txt.buildStream());
-
     ImageObject img = new ImageObject(
         "/home/agsayan/Documents/Workspace/Github/PDFLib/src/main/resources/images/0038.jpg");
     img.setPosition(true, 70, 50);
     img.setHeigth(100);
     img.setWidth(100);
     img.setObjectPos(3);
+    System.out.println(img.buildStream());
 
     try {
       OutputStream os =
           new FileOutputStream(new File("/home/agsayan/agsayan.jpg"));
       img.write(os);
-      // os.write(img.buildStream().getBytes());
       os.close();
     } catch (FileNotFoundException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
     } catch (IOException e) {
     }
   }

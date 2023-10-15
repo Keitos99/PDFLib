@@ -1,39 +1,51 @@
 package de.agsayan.pdfLib.pdfObject.TypeObjects;
 
-import java.nio.ByteBuffer;
+import de.agsayan.pdfLib.pdfObject.PDFObject;
 
 /**
  * IndirectObject
+ * 3.2.9
  */
-public class IndirectObject {
+public class IndirectObject extends PDFObject {
+
+  private final String START_OBJECT = "obj";
+  private final String END_OBJECT = "endobj";
+
   private int objectNumber;
   private int generationNumber;
-  private byte[] object = new byte[0];
+  private PDFObject objectContent;
 
-  public IndirectObject(int objectNumber, int generationNumber) {
+  public IndirectObject(int objectNumber) {
     this.objectNumber = objectNumber;
-    this.generationNumber = generationNumber;
+    // should only be higher as 0 if the pdf was updated
+    this.generationNumber = 0;
   }
 
-  public void addBytes(byte[] object) { this.object = object; }
+  @Override
+  public String toString() {
+    String content = "";
+    if (this.objectContent == null)
+      content = "";
+    else
+      content = this.getContent().toString();
 
-  // @Override
-  // public String toString() {
-  //
-  //   return +this.object + "\n"
-  //       + "endobj\n";
-  // }
-  
+    return this.objectNumber + " " + this.generationNumber + " " +
+        START_OBJECT + "\n" + content + "\n" + END_OBJECT;
+  }
 
-  public byte[] getBytes() {
-    String beginningString = objectNumber + " " + generationNumber + "obj\n";
-    String endString = "endobj\n";
-    byte[] b = new byte[beginningString.getBytes().length + this.object.length + endString.getBytes().length];
+  public int getObjectNumber() { return objectNumber; }
 
-    ByteBuffer buff = ByteBuffer.wrap(b);
-    buff.put(beginningString.getBytes());
-    buff.put(this.object);
-    buff.put(endString.getBytes());
-    return buff.array();
+  public void setObjectNumber(int objectNumber) {
+    this.objectNumber = objectNumber;
+  }
+
+  public int getGenerationNumber() { return generationNumber; }
+
+  public PDFObject getContent() { return objectContent; }
+
+  public void setContent(PDFObject content) {
+    if (content instanceof IndirectObject)
+      return;
+    this.objectContent = content;
   }
 }

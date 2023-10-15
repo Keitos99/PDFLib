@@ -6,13 +6,20 @@ import java.util.ArrayList;
  * ArrayDictionary
  * 3.2.5
  */
-public class ArrayObject {
+public class ArrayObject<T> {
+  // TODO: maybe extend from ArrayList?
 
-  private ArrayList<Object> items;
+  private ArrayList<T> items;
 
   public ArrayObject() { items = new ArrayList<>(); }
 
-  public void add(Object item) { items.add(item); }
+  public void add(T item) { items.add(item); }
+
+  public int size() { return items.size(); }
+
+  public Object get(int index) {
+    return items.get(index);
+  }
 
   @Override
   public String toString() {
@@ -24,12 +31,4 @@ public class ArrayObject {
         + "\n";
   }
 
-  public static void main(String[] args) {
-    ArrayObject array = new ArrayObject();
-    array.add("0");
-    array.add("0");
-    array.add("100");
-    array.add("400");
-    System.out.println(array);
-  }
 }

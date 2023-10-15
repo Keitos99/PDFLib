@@ -1,22 +1,32 @@
 package de.agsayan.pdfLib.pdfObject.TypeObjects;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * DictionaryObject
  */
-public class DictionaryObject {
+public class DictionaryObject<T> {
 
   LinkedHashMap<String, Object> dict;
 
   public DictionaryObject() { this.dict = new LinkedHashMap<>(); }
 
   public void put(String key, Object value) {
-      if (value instanceof NameObject) {
-        String t = value.toString();
-      }
+    if (value instanceof NameObject) {
+      String t = value.toString();
+    }
     dict.put(new NameObject(key).toString(), value);
   }
+
+  public Object getValue(String key) { return dict.get(key); }
+
+  public Object getFirst() {
+    Map.Entry<String, Object> firstEntry = dict.entrySet().iterator().next();
+    return firstEntry.getValue();
+  }
+
+  public int size() { return dict.size(); }
 
   @Override
   public String toString() {
