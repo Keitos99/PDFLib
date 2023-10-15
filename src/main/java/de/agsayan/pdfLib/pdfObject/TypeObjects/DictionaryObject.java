@@ -16,7 +16,9 @@ public class DictionaryObject<T> {
     dict.put(new NameObject(key).toString(), value);
   }
 
-  public T getValue(String key) { return dict.get(key); }
+  public T getValue(String key) { 
+    return dict.get(new NameObject(key).toString()); 
+  }
 
   public T getFirst() {
     Map.Entry<String, T> firstEntry = dict.entrySet().iterator().next();

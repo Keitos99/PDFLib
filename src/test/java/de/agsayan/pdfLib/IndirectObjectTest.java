@@ -2,6 +2,7 @@ package de.agsayan.pdfLib;
 
 import static org.junit.Assert.assertTrue;
 
+import de.agsayan.pdfLib.pdfObject.Filter;
 import de.agsayan.pdfLib.pdfObject.TypeObjects.IndirectObject;
 import de.agsayan.pdfLib.pdfObject.page.streamObj.TextObject;
 import org.junit.Test;
@@ -20,6 +21,9 @@ public class IndirectObjectTest {
     txt.setText("Hello World!", 12);
     txt.setPosition(true, 70, 50);
     txt.setLength(100);
+    txt.addFilter(Filter.DCTDecode);
+    txt.addFilter(Filter.LZWDecode);
+
     indirectObject.setContent(txt);
 
     String result = "1 0 obj"
@@ -28,6 +32,8 @@ public class IndirectObjectTest {
                     + "\n"
                     + "/LENGTH 100"
                     + "\n"
+                    + "/Filter [/DCTDecode /LZWDecode ]"
+                    + "\n\n"
                     + ">>"
                     + "\n"
                     + "stream"
@@ -48,6 +54,7 @@ public class IndirectObjectTest {
                     + "\n"
                     + "endobj";
 
+    System.out.println(indirectObject.toString());
     assertTrue(indirectObject.toString().equals(result));
   }
 }

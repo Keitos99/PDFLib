@@ -17,7 +17,7 @@ public abstract class StreamObject extends PDFObject {
   private final String START_STREAM = "stream";
   private final String END_STREAM = "endstream";
 
-  DictionaryObject streamDictionary;
+  DictionaryObject<Object> streamDictionary;
   protected final String LENGTH = "LENGTH";
 
   // following are optional
