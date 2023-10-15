@@ -54,7 +54,7 @@ public class PageObject extends PDFObject {
       ArrayObject arrayObject = new ArrayObject();
       arrayObject.add(0);
       arrayObject.add(0);
-      arrayObject.add(getPageWidth());
+      arrayObject.add(getWidth());
       arrayObject.add(getHeight());
       return "/MediaBox " + arrayObject + "\n";
     }
@@ -168,7 +168,7 @@ public class PageObject extends PDFObject {
     this.pageHeight = pageHeight;
   }
 
-  public int getPageWidth() { return pageWidth; }
+  public int getWidth() { return pageWidth; }
 
   public int getHeight() { return pageHeight; }
 

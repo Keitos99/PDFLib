@@ -1,13 +1,24 @@
 package de.agsayan.pdfLib.pdfObject.page;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 import de.agsayan.pdfLib.pdfObject.TypeObjects.DictionaryObject;
 import de.agsayan.pdfLib.pdfObject.TypeObjects.NameObject;
 import de.agsayan.pdfLib.pdfObject.page.streamObj.StreamObject;
 
 public class XObject extends StreamObject {
 
+  private final String TYPE = "XObject";
+  protected String subtype;
+  protected String colorSpace;
+  protected int width;
+  protected int height;
+  protected int bitsPerComponent;
+  protected String filter;
+
   public XObject() {
-    type = "XObject";
+    type = TYPE;
     bitsPerComponent = 8;
   }
 
@@ -23,10 +34,14 @@ public class XObject extends StreamObject {
     dictionary.put("ColorSpace", new NameObject(colorSpace));
     dictionary.put("Length", length);
 
-    String result = dictionary.toString() + super.buildStream();
+    String result = dictionary.toString() + "\n" + super.buildStream();
 
     return result;
-      
+  }
+
+  @Override
+  public void write(OutputStream os) {
+      super.write(os);
   }
 
   public void setSubtype(String subtype) { this.subtype = subtype; }

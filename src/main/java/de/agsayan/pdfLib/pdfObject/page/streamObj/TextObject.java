@@ -10,8 +10,8 @@ public class TextObject extends StreamObject {
   private static final String BEGIN_TEXT = "BT";
   private static final String END_TEXT = "ET";
   private static final String TEXT_FONT = "Tf";
-  private static final String TEXT_OFFSET = "Td";
-  private static final String SHOW_TEXT = "Tj";
+  private static final String TEXT_OFFSET = "TD";
+  private static final String SHOW_TEXT = "TJ";
 
   private String text;
   private String textAlignment;
@@ -22,9 +22,6 @@ public class TextObject extends StreamObject {
   private int fontReference;
   private int textSize;
   private String textColor;
-
-  private String pdfTxtSyntax(String line, int textSize, float xPos,
-                              float yPos) {}
 
   public void setText(String text, int textSize) {
     this.text = text;
@@ -70,15 +67,15 @@ public class TextObject extends StreamObject {
   public void setTextFont(String textFont) { this.textFont = textFont; }
 
   @Override
-  public String buildStream() {
+  public String getContent() {
     StringObjects string = new StringObjects(getText());
 
     String result = BEGIN_TEXT + "\n";
+    result += xPos + " " + yPos + " " + TEXT_OFFSET + "\n";
     result += new NameObject("F" + fontReference) + " " + getTextSize() + " " +
               TEXT_FONT + "\n";
-    result += xPos + " " + yPos + " " + TEXT_OFFSET + "\n";
     result += string + " " + SHOW_TEXT + "\n";
-    result += END_TEXT + "\n\n";
+    result += END_TEXT + "";
 
     return result;
   }

@@ -1,10 +1,16 @@
 package de.agsayan.pdfLib.pdfObject.page.streamObj;
 
-import de.agsayan.pdfLib.pdfObject.page.XObject;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+
 import javax.imageio.ImageIO;
+
+import de.agsayan.pdfLib.pdfObject.page.XObject;
 
 public class ImageObject extends GrahicsObject {
   private enum ImageType {
@@ -25,17 +31,30 @@ public class ImageObject extends GrahicsObject {
   private int objectPos;
   private float heigth;
   private float width;
+  private byte[] img;
+  private XObject imgXObj;
   ImageType imageType = ImageType.unknown;
 
   public ImageObject(String imgPath) {
     super();
     this.imgPath = imgPath;
     imageType = ImageType.valueOf(imgPath.split("\\.")[1] + "");
-    type = "XObject";
-    subtype = "Image";
-    bitsPerComponent = 8;
-    filter = getEncoding();
-    colorSpace = "DeviceRGB";
+
+    imgXObj = new XObject();
+    File imgFile = new File(imgPath);
+    this.length = imgFile.length();
+    imgXObj.setLength(this.length);
+    try {
+      BufferedImage bufferedImg = ImageIO.read(imgFile);
+      imgXObj.setWidth(bufferedImg.getWidth());
+      imgXObj.setHeight(bufferedImg.getHeight());
+
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      ImageIO.write(bufferedImg, "jpg", baos);
+      img = baos.toByteArray();
+    } catch (IOException e) {
+      // pass
+    }
   }
 
   private String paintImg(float posX, float posY, float heigth, float width) {
@@ -47,20 +66,26 @@ public class ImageObject extends GrahicsObject {
 
   // zur zeit nur jpg format
   public String embedXObjectWithImg() throws IOException {
-    File imgFile = new File(imgPath);
-    BufferedImage bufferedImg = ImageIO.read(imgFile);
+    return buildXObject().buildStream();
+  }
 
-    this.length = imgFile.length();
+  public XObject buildXObject() {
+    String subtype = "Image";
+    String filter = getEncoding();
+    String colorSpace = "DeviceRGB";
 
-    XObject imgXObj = new XObject();
     imgXObj.setSubtype(subtype);
     imgXObj.setColorSpace(colorSpace);
-    imgXObj.setWidth(bufferedImg.getWidth());
-    imgXObj.setHeight(bufferedImg.getHeight());
     imgXObj.setFilter(filter);
-    imgXObj.setContent("imgPath" + imgPath);
-    imgXObj.setLength(imgFile.length());
-    return imgXObj.buildStream();
+    imgXObj.setContent(new String(Base64.getEncoder().encode(img)));
+    return imgXObj;
+
+  }
+
+  @Override
+  public void write(OutputStream os) {
+      buildXObject().write(os);
+      // super.write(os);
   }
 
   private String getEncoding() {
@@ -75,7 +100,11 @@ public class ImageObject extends GrahicsObject {
   @Override
   public String buildStream() {
     setGraphic(paintImg(xPos, yPos, heigth, width));
-    return super.buildStream();
+    try {
+      return embedXObjectWithImg() + super.buildStream();
+    } catch (IOException e) {
+      return "";
+    }
   }
 
   public float getHeigth() { return heigth; }
@@ -86,13 +115,9 @@ public class ImageObject extends GrahicsObject {
 
   public void setWidth(float width) { this.width = width; }
 
-  public void setReference(int reference) { 
-    this.reference = "/I" + reference; 
-  }
+  public void setReference(int reference) { this.reference = "/I" + reference; }
 
-  public String getReference() {
-      return reference;
-  }
+  public String getReference() { return reference; }
 
   public int getObjectPos() { return objectPos; }
 
