@@ -14,7 +14,6 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import de.agsayan.pdfLib.pdfObject.PDF;
-import de.agsayan.pdfLib.pdfObject.TypeObjects.IndirectObject;
 import de.agsayan.pdfLib.pdfObject.page.PageObject;
 import de.agsayan.pdfLib.pdfObject.page.PageObject.PageFormat;
 import de.agsayan.pdfLib.pdfObject.page.streamObj.ImageObject;

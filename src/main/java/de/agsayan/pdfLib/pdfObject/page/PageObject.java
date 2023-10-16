@@ -159,7 +159,7 @@ public class PageObject extends PDFObject {
 
   public String generateStream() {
     DictionaryObject dictionaryObject = new DictionaryObject();
-    dictionaryObject.put("Length", 100);
+    dictionaryObject.putItem("Length", 100);
     return dictionaryObject.toString() + buildStream();
   }
 

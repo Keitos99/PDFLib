@@ -1,11 +1,10 @@
 package de.agsayan.pdfLib.pdfObject.page;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
 import de.agsayan.pdfLib.pdfObject.TypeObjects.DictionaryObject;
 import de.agsayan.pdfLib.pdfObject.TypeObjects.NameObject;
 import de.agsayan.pdfLib.pdfObject.page.streamObj.StreamObject;
+import java.io.IOException;
+import java.io.OutputStream;
 
 public class XObject extends StreamObject {
 
@@ -25,15 +24,15 @@ public class XObject extends StreamObject {
 
   @Override
   public String buildStream() {
-    DictionaryObject dictionary = new DictionaryObject();
-    dictionary.put("Type", new NameObject(type));
-    dictionary.put("Subtype", new NameObject(subtype));
-    dictionary.put("Width", width);
-    dictionary.put("Height", height);
-    dictionary.put("BitsPerComponent", bitsPerComponent);
-    dictionary.put("Filter", new NameObject(filter));
-    dictionary.put("ColorSpace", new NameObject(colorSpace));
-    dictionary.put("Length", length);
+    DictionaryObject<Object> dictionary = new DictionaryObject<>();
+    dictionary.putItem("Type", new NameObject(type));
+    dictionary.putItem("Subtype", new NameObject(subtype));
+    dictionary.putItem("Width", width);
+    dictionary.putItem("Height", height);
+    dictionary.putItem("BitsPerComponent", bitsPerComponent);
+    dictionary.putItem("Filter", new NameObject(filter));
+    dictionary.putItem("ColorSpace", new NameObject(colorSpace));
+    dictionary.putItem("Length", getLength());
 
     String result = dictionary.toString() + "\n" + super.buildStream();
 
@@ -42,14 +41,12 @@ public class XObject extends StreamObject {
 
   @Override
   public void write(OutputStream os) {
-      super.write(os);
+    super.write(os);
   }
 
   public void setSubtype(String subtype) { this.subtype = subtype; }
 
   public void setColorSpace(String colorSpace) { this.colorSpace = colorSpace; }
-
-  public void setLength(long length) { this.length = length; }
 
   public void setFilter(String filter) { this.filter = filter; }
 

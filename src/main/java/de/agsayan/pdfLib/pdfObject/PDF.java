@@ -94,8 +94,8 @@ public class PDF {
 
   public void addCatalog() {
     DictionaryObject dictionaryObject = new DictionaryObject();
-    dictionaryObject.put("Pages", "2 0 R");
-    dictionaryObject.put("Type", new NameObject("Catalog"));
+    dictionaryObject.putItem("Pages", "2 0 R");
+    dictionaryObject.putItem("Type", new NameObject("Catalog"));
 
     String catalog = dictionaryObject.toString();
     pdfObjects.add(catalog);
@@ -118,17 +118,17 @@ public class PDF {
       t++;
     }
 
-    dictionary.put("Type", new NameObject("Pages"));
-    dictionary.put("Count", count);
-    dictionary.put("Kids", array);
+    dictionary.putItem("Type", new NameObject("Pages"));
+    dictionary.putItem("Count", count);
+    dictionary.putItem("Kids", array);
 
     pdfObjects.add(dictionary.toString());
   }
 
   public void writeTrailer(int size) throws IOException {
     DictionaryObject dictionary = new DictionaryObject();
-    dictionary.put("Root", "1 0 R");
-    dictionary.put("Size", size);
+    dictionary.putItem("Root", "1 0 R");
+    dictionary.putItem("Size", size);
 
     String trailer = "trailer\n" + dictionary + "\n%%EOF";
     os.write(trailer.getBytes());

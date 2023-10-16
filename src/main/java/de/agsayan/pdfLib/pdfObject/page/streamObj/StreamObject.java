@@ -1,13 +1,13 @@
 package de.agsayan.pdfLib.pdfObject.page.streamObj;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 import de.agsayan.pdfLib.pdfObject.Filter;
 import de.agsayan.pdfLib.pdfObject.PDFObject;
 import de.agsayan.pdfLib.pdfObject.TypeObjects.ArrayObject;
 import de.agsayan.pdfLib.pdfObject.TypeObjects.DictionaryObject;
 import de.agsayan.pdfLib.pdfObject.page.PageObject;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.stream.Stream;
 
 /*
  * 3.2.7 Stream Objects
@@ -33,7 +33,7 @@ public abstract class StreamObject extends PDFObject {
 
   public StreamObject() {
     this.streamDictionary = new DictionaryObject<Object>();
-    this.streamDictionary.put(LENGTH, 0); // LENGTH is not optional
+    this.streamDictionary.putItem(LENGTH, 0); // LENGTH is not optional
   }
 
   public void setPosition(PageObject page, float x, float y) {
@@ -78,7 +78,7 @@ public abstract class StreamObject extends PDFObject {
   public void setContent(String content) { this.content = content; }
 
   public void setLength(long length) {
-    this.streamDictionary.put(LENGTH, length);
+    this.streamDictionary.putItem(LENGTH, length);
   }
 
   public long getLength() {
@@ -88,7 +88,7 @@ public abstract class StreamObject extends PDFObject {
   public void addFilter(Filter filter) {
     Object filterS = this.streamDictionary.getValue(FILTER);
     if (filterS == null) {
-      this.streamDictionary.put(FILTER, filter);
+      this.streamDictionary.putItem(FILTER, filter);
       return;
     }
 
@@ -96,7 +96,7 @@ public abstract class StreamObject extends PDFObject {
       ArrayObject<Filter> filters = new ArrayObject<>();
       filters.add((Filter)filterS);
       filters.add(filter);
-      this.streamDictionary.put(FILTER, filters);
+      this.streamDictionary.putItem(FILTER, filters);
       return;
     }
 
@@ -107,22 +107,22 @@ public abstract class StreamObject extends PDFObject {
     return this.streamDictionary.getValue(FILTER).toString();
   }
 
-  public void setDecodeParms(String key, Object value) {
-    this.streamDictionary.put(DECODE_PARMS, value);
+  public void setDecodeParms(String key, String value) {
+    this.streamDictionary.putItem(DECODE_PARMS, value);
 
     Object filterS = this.streamDictionary.getValue(DECODE_PARMS);
     if (filterS == null) {
       DictionaryObject<String> sub = new DictionaryObject<>();
-      sub.put(key, value);
+      sub.putItem(key, value);
 
-      this.streamDictionary.put(DECODE_PARMS, sub);
+      this.streamDictionary.putItem(DECODE_PARMS, sub);
       return;
     }
 
-    DictionaryObject<String> sub =
-        (DictionaryObject<String>)this.streamDictionary;
-    sub.put(key, value);
-    this.streamDictionary.put(DECODE_PARMS, sub);
+    DictionaryObject<Object> sub =
+        (DictionaryObject<Object>)this.streamDictionary;
+    sub.putItem(key, value);
+    this.streamDictionary.putItem(DECODE_PARMS, sub);
   }
 
   public String getDECODE_PARMS() {
@@ -138,7 +138,7 @@ public abstract class StreamObject extends PDFObject {
   }
 
   public void setFileSpecification(String fileSpecification) {
-    this.streamDictionary.put(FILE_SPECIFICATION, fileSpecification);
+    this.streamDictionary.putItem(FILE_SPECIFICATION, fileSpecification);
   }
 
   public String getFileSpecification() {
@@ -149,7 +149,7 @@ public abstract class StreamObject extends PDFObject {
 
     Object filterS = this.streamDictionary.getValue(F_FILTER);
     if (filterS == null) {
-      this.streamDictionary.put(F_FILTER, filter);
+      this.streamDictionary.putItem(F_FILTER, filter);
       return;
     }
 
@@ -157,7 +157,7 @@ public abstract class StreamObject extends PDFObject {
       ArrayObject<Filter> filters = new ArrayObject<>();
       filters.add((Filter)filterS);
       filters.add(filter);
-      this.streamDictionary.put(F_FILTER, filters);
+      this.streamDictionary.putItem(F_FILTER, filters);
       return;
     }
 
@@ -172,7 +172,7 @@ public abstract class StreamObject extends PDFObject {
     // protected DictionaryObject fDecodeParms;
     Object filterS = this.streamDictionary.getValue(F_DECODE_PARMS);
     if (filterS == null) {
-      this.streamDictionary.put(F_DECODE_PARMS, filter);
+      this.streamDictionary.putItem(F_DECODE_PARMS, filter);
       return;
     }
 
@@ -180,7 +180,7 @@ public abstract class StreamObject extends PDFObject {
       ArrayObject<Object> filters = new ArrayObject<>();
       filters.add(filterS);
       filters.add(filter);
-      this.streamDictionary.put(F_DECODE_PARMS, filters);
+      this.streamDictionary.putItem(F_DECODE_PARMS, filters);
       return;
     }
 

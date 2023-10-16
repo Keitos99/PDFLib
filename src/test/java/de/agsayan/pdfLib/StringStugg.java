@@ -1,5 +1,7 @@
 package de.agsayan.pdfLib;
 
+import org.junit.Test;
+
 public class StringStugg {
 
   public static String pdfBeginning(int i, int width, int height) {
@@ -90,4 +92,10 @@ public class StringStugg {
         + "5798\n"
         + "%%EOF\n";
   }
+
+  @Test
+   public void test() {
+     System.out.println(StringStugg.pdfBeginning(1, 100, 100));
+     System.out.println(StringStugg.pdfEnding());
+   }
 }

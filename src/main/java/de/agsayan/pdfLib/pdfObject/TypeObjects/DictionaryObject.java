@@ -8,20 +8,20 @@ import java.util.Map;
  */
 public class DictionaryObject<T> {
 
-  LinkedHashMap<String, T> dict;
+  LinkedHashMap<NameObject, T> dict;
 
   public DictionaryObject() { this.dict = new LinkedHashMap<>(); }
 
-  public void put(String key, T value) {
-    dict.put(new NameObject(key).toString(), value);
+  public void putItem(String key, T value) {
+    dict.put(new NameObject(key), value);
   }
 
-  public T getValue(String key) { 
-    return dict.get(new NameObject(key).toString()); 
-  }
+  public void putItem(NameObject key, T value) { dict.put(key, value); }
+
+  public T getValue(String key) { return dict.get(new NameObject(key)); }
 
   public T getFirst() {
-    Map.Entry<String, T> firstEntry = dict.entrySet().iterator().next();
+    Map.Entry<NameObject, T> firstEntry = dict.entrySet().iterator().next();
     return firstEntry.getValue();
   }
 
@@ -30,11 +30,8 @@ public class DictionaryObject<T> {
   @Override
   public String toString() {
     String entries = "";
-    for (String key : dict.keySet()) {
+    for (NameObject key : dict.keySet()) {
       T value = dict.get(key);
-      if (value instanceof NameObject) {
-        String t = value.toString();
-      }
       String entry = key + " " + value + "\n";
       entries += entry;
     }

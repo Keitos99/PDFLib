@@ -1,5 +1,6 @@
 package de.agsayan.pdfLib.pdfObject.page.streamObj;
 
+import de.agsayan.pdfLib.pdfObject.page.XObject;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -7,10 +8,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-
 import javax.imageio.ImageIO;
-
-import de.agsayan.pdfLib.pdfObject.page.XObject;
 
 public class ImageObject extends GrahicsObject {
   private enum ImageType {
@@ -42,8 +40,8 @@ public class ImageObject extends GrahicsObject {
 
     imgXObj = new XObject();
     File imgFile = new File(imgPath);
-    this.length = imgFile.length();
-    imgXObj.setLength(this.length);
+    setLength(imgFile.length());
+    imgXObj.setLength(getLength());
     try {
       BufferedImage bufferedImg = ImageIO.read(imgFile);
       imgXObj.setWidth(bufferedImg.getWidth());
@@ -79,13 +77,12 @@ public class ImageObject extends GrahicsObject {
     imgXObj.setFilter(filter);
     imgXObj.setContent(new String(Base64.getEncoder().encode(img)));
     return imgXObj;
-
   }
 
   @Override
   public void write(OutputStream os) {
-      buildXObject().write(os);
-      // super.write(os);
+    buildXObject().write(os);
+    // super.write(os);
   }
 
   private String getEncoding() {

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class ArrayObject<T> {
   // TODO: maybe extend from ArrayList?
 
+  private final int MAX_ITEMS = 8191;
   private ArrayList<T> items;
 
   public ArrayObject() { items = new ArrayList<>(); }

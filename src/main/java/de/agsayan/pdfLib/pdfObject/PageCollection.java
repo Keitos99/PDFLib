@@ -31,11 +31,11 @@ public class PageCollection extends IndirectObject {
 
   @Override
   public String toString() {
-    this.dictionary.put("Type", TYPE);
+    this.dictionary.putItem("Type", TYPE);
     if (mediaBox != null && !mediaBox.isEmpty())
-      this.dictionary.put("MediaBox", mediaBox);
-    this.dictionary.put("Count", count);
-    this.dictionary.put("Kids", kids.toString());
+      this.dictionary.putItem("MediaBox", mediaBox);
+    this.dictionary.putItem("Count", count);
+    this.dictionary.putItem("Kids", kids.toString());
     return this.dictionary.toString();
   }
 }

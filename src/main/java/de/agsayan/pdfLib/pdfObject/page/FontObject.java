@@ -62,9 +62,9 @@ public class FontObject extends ResourceObject {
     DictionaryObject items = new DictionaryObject();
     DictionaryObject item = new DictionaryObject();
 
-    items.put("Type", TYPE);
-    items.put("BaseFont", new NameObject(getFontName()));
-    items.put("Subtype", "Type1");
+    items.putItem("Type", TYPE);
+    items.putItem("BaseFont", new NameObject(getFontName()));
+    items.putItem("Subtype", "Type1");
     result = result + " " + items.toString();
     return result;
   }
