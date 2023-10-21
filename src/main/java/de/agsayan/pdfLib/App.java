@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import de.agsayan.pdfLib.pdfObject.PDF;
+import de.agsayan.pdfLib.pdfObject.TypeObjects.IndirectObject;
 import de.agsayan.pdfLib.pdfObject.page.PageObject;
 import de.agsayan.pdfLib.pdfObject.page.PageObject.PageFormat;
 import de.agsayan.pdfLib.pdfObject.page.streamObj.ImageObject;
@@ -21,6 +22,9 @@ import de.agsayan.pdfLib.pdfObject.page.streamObj.TextObject;
 
 public class App {
   public static void main(String[] args) {
+
+    IndirectObject indirectObject = new IndirectObject(1);
+    System.out.println(indirectObject.toString());
     ImageObject img = new ImageObject(
         "/home/agsayan/Documents/Workspace/Github/PDFLib/src/main/resources/images/0038.jpg");
     img.setPosition(true, 70, 50);
