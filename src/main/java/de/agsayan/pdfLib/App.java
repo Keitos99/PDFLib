@@ -1,24 +1,21 @@
 package de.agsayan.pdfLib;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URL;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import de.agsayan.pdfLib.pdfObject.PDF;
 import de.agsayan.pdfLib.pdfObject.TypeObjects.IndirectObject;
 import de.agsayan.pdfLib.pdfObject.page.PageObject;
 import de.agsayan.pdfLib.pdfObject.page.PageObject.PageFormat;
 import de.agsayan.pdfLib.pdfObject.page.streamObj.ImageObject;
 import de.agsayan.pdfLib.pdfObject.page.streamObj.TextObject;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.nio.file.WatchKey;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 
 public class App {
   public static void main(String[] args) {
@@ -33,7 +30,7 @@ public class App {
     System.out.println(indirectObject.toString());
     ImageObject img = new ImageObject(
         "/home/agsayan/Documents/Workspace/Github/PDFLib/src/main/resources/images/0038.jpg");
-    img.setPosition(true, 70, 50);
+    img.setPosition(70, 50);
     img.setHeigth(100);
     img.setWidth(100);
     img.setObjectPos(3);
@@ -61,23 +58,17 @@ public class App {
     pdf.addCatalog();
     pdf.addPagesCollection(numberOfPages);
 
-    int textSize = 10;
     boolean isCursive = false;
     boolean isBold = true;
     boolean isUnderlined = false;
-    String textFont = "Times-Roman";
-    String textColor = "0,0,0";
-    String text = "Hello World";
 
     PageObject page = new PageObject(PageFormat.valueOf("A4"));
-    TextObject txtObj = new TextObject();
-    txtObj.setText(text, textSize);
+    TextObject txtObj = new TextObject("Hello World");
+    txtObj.setTextSize(50);
     txtObj.setCursive(isCursive);
     txtObj.setBold(isBold);
     txtObj.setUnderlined(isUnderlined);
-    txtObj.setTextColor(textColor);
-    txtObj.setTextFont(textFont);
-    txtObj.setPosition(page, 100, 100);
+    txtObj.setPosition(200, 400);
 
     page.addStreamObjects("Font", txtObj);
     page.addStreamContent(txtObj);
@@ -119,7 +110,7 @@ public class App {
           txtObj.setCursive(isCursive);
           txtObj.setBold(isBold);
           txtObj.setUnderlined(isUnderlined);
-          txtObj.setTextColor(textColor);
+          txtObj.setRgbTextColor(textColor);
           txtObj.setTextFont(textFont);
 
           page.addStreamObjects("Font", txtObj);

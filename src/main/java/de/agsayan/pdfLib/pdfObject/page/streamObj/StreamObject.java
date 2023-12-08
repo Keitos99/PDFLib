@@ -28,8 +28,8 @@ public abstract class StreamObject extends PDFObject {
   protected String F_DECODE_PARMS = "FDecodeParms";  // array or dictionary
 
   private String content;
-  protected float xPos;
-  protected float yPos;
+  protected float xPosTextSpaceUnit;
+  protected float yPosTextSpaceUnit;
 
   public StreamObject() {
     this.streamDictionary = new DictionaryObject<Object>();
@@ -37,18 +37,18 @@ public abstract class StreamObject extends PDFObject {
   }
 
   public void setPosition(PageObject page, float x, float y) {
-    this.xPos = milimeterToPtsConverter(x);
-    this.yPos = page.getHeight() - milimeterToPtsConverter(y);
+    this.xPosTextSpaceUnit = milimeterToPtsConverter(x);
+    this.yPosTextSpaceUnit = milimeterToPtsConverter(y);
+    // this.xPos = milimeterToPtsConverter(x);
+    // this.yPos = page.getHeight() - milimeterToPtsConverter(y);
   }
 
-  public void setPosition(float x, float y) {
-    this.xPos = milimeterToPtsConverter(x);
-    this.yPos = milimeterToPtsConverter(y);
-  }
-
-  public void setPosition(boolean t, float x, float y) {
-    this.xPos = x;
-    this.yPos = y;
+  /**
+   * sets the x and y position of the object. The bottom left corner of a page is the point, where x and y is 0
+   */
+  public void setPosition(float xTextSpaceUnit, float yTextSpaceUnit) {
+    this.xPosTextSpaceUnit = xTextSpaceUnit;
+    this.yPosTextSpaceUnit = yTextSpaceUnit;
   }
 
   private float milimeterToPtsConverter(float mm) {

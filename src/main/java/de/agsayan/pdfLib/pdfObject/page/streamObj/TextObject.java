@@ -21,11 +21,28 @@ public class TextObject extends StreamObject {
   private boolean isUnderlined;
   private int fontReference;
   private int textSize;
-  private String textColor;
+  private String rgbTextColor;
+
+  public TextObject() {
+    // empty constructor
+  }
+
+  public TextObject(String text) {
+    // empty constructor
+    this.text = text;
+    this.textSize = 12;
+    this.textFont = "Times-Roman";
+    this.rgbTextColor = "0,0,0"; // black
+  }
+
 
   public void setText(String text, int textSize) {
     this.text = text;
     this.textSize = textSize;
+  }
+
+  public void setText(String text) {
+    this.text = text;
   }
 
   public String getText() { return this.text; }
@@ -58,9 +75,9 @@ public class TextObject extends StreamObject {
 
   public void setTextSize(int textSize) { this.textSize = textSize; }
 
-  public String getTextColor() { return textColor; }
+  public String getRgbTextColor() { return rgbTextColor; }
 
-  public void setTextColor(String textColor) { this.textColor = textColor; }
+  public void setRgbTextColor(String textColor) { this.rgbTextColor = textColor; }
 
   public String getTextFont() { return textFont; }
 
@@ -71,7 +88,7 @@ public class TextObject extends StreamObject {
     StringObjects string = new StringObjects(getText());
 
     String result = BEGIN_TEXT + "\n";
-    result += xPos + " " + yPos + " " + TEXT_OFFSET + "\n";
+    result += xPosTextSpaceUnit + " " + yPosTextSpaceUnit + " " + TEXT_OFFSET + "\n";
     result += new NameObject("F" + fontReference) + " " + getTextSize() + " " +
               TEXT_FONT + "\n";
     result += string + " " + SHOW_TEXT + "\n";

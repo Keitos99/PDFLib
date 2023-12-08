@@ -96,7 +96,7 @@ public class ImageObject extends GrahicsObject {
 
   @Override
   public String buildStream() {
-    setGraphic(paintImg(xPos, yPos, heigth, width));
+    setGraphic(paintImg(xPosTextSpaceUnit, yPosTextSpaceUnit, heigth, width));
     try {
       return embedXObjectWithImg() + super.buildStream();
     } catch (IOException e) {
