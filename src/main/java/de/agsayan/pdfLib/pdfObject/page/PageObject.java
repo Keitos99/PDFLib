@@ -1,13 +1,12 @@
 package de.agsayan.pdfLib.pdfObject.page;
 
-import java.util.ArrayList;
-
 import de.agsayan.pdfLib.pdfObject.PDFObject;
 import de.agsayan.pdfLib.pdfObject.TypeObjects.ArrayObject;
 import de.agsayan.pdfLib.pdfObject.TypeObjects.DictionaryObject;
 import de.agsayan.pdfLib.pdfObject.page.streamObj.ImageObject;
 import de.agsayan.pdfLib.pdfObject.page.streamObj.StreamObject;
 import de.agsayan.pdfLib.pdfObject.page.streamObj.TextObject;
+import java.util.ArrayList;
 
 public class PageObject extends PDFObject {
 
@@ -51,7 +50,7 @@ public class PageObject extends PDFObject {
     if (this.pageFormat.equals(PageFormat.A4)) {
       return "\n";
     } else {
-      ArrayObject arrayObject = new ArrayObject();
+      ArrayObject<Object> arrayObject = new ArrayObject<Object>();
       arrayObject.add(0);
       arrayObject.add(0);
       arrayObject.add(getWidth());
@@ -65,9 +64,9 @@ public class PageObject extends PDFObject {
     return buildDictionary(
         "obj", "/Type /Page",
         contentReferenceString, // Referenz zu den Contents vom Page
-        getParentReference(),   // parent referenc
-        buildResourcesBlock(),  // ressource block
-        buildMediaBox()         // For sizing the pdf page
+        getParentReference(), // parent referenc
+        buildResourcesBlock(), // ressource block
+        buildMediaBox() // For sizing the pdf page
     );
   }
 
@@ -110,23 +109,24 @@ public class PageObject extends PDFObject {
   // RES die von den Obj der Page genutzt werden
   // PDFReference 1.4: 3.7.2
   private String buildResourcesBlock() {
-    String result = buildDictionary("/Resources", buildFontDictionary(),
-                                    buildProcedureSet() + buildXObject());
+    String result = buildDictionary(
+        "/Resources", buildFontDictionary(),
+        buildProcedureSet() + buildXObject()); // only if the pdf has images
     return result;
   }
 
   public void addStreamObjects(String key, StreamObject objects) {
     if (key.equals("Font")) {
-      TextObject txtObj = (TextObject)objects;
+      TextObject txtObj = (TextObject) objects;
       String coursive = "";
       if (txtObj.getTextFont().equals("Times-Roman")) {
         coursive = "Italic";
       } else {
         coursive = "Oblique";
       }
-      addFont((TextObject)objects, coursive);
+      addFont((TextObject) objects, coursive);
     } else {
-      addImage((ImageObject)objects);
+      addImage((ImageObject) objects);
     }
   }
 
@@ -168,15 +168,21 @@ public class PageObject extends PDFObject {
     this.pageHeight = pageHeight;
   }
 
-  public int getWidth() { return pageWidth; }
+  public int getWidth() {
+    return pageWidth;
+  }
 
-  public int getHeight() { return pageHeight; }
+  public int getHeight() {
+    return pageHeight;
+  }
 
   public void addStreamContent(StreamObject streamObj) {
     streamObjects.add(streamObj);
   }
 
-  public String getParentReference() { return "/Parent " + parentReference; }
+  public String getParentReference() {
+    return "/Parent " + parentReference;
+  }
 
   public void setParentReference(String parentReference) {
     this.parentReference = parentReference;

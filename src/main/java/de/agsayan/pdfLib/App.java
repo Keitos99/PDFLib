@@ -1,5 +1,11 @@
 package de.agsayan.pdfLib;
 
+import de.agsayan.pdfLib.pdfObject.PDF;
+import de.agsayan.pdfLib.pdfObject.TypeObjects.IndirectObject;
+import de.agsayan.pdfLib.pdfObject.page.PageObject;
+import de.agsayan.pdfLib.pdfObject.page.PageObject.PageFormat;
+import de.agsayan.pdfLib.pdfObject.page.streamObj.ImageObject;
+import de.agsayan.pdfLib.pdfObject.page.streamObj.TextObject;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -8,20 +14,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.file.WatchKey;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import de.agsayan.pdfLib.pdfObject.PDF;
-import de.agsayan.pdfLib.pdfObject.TypeObjects.IndirectObject;
-import de.agsayan.pdfLib.pdfObject.page.PageObject;
-import de.agsayan.pdfLib.pdfObject.page.PageObject.PageFormat;
-import de.agsayan.pdfLib.pdfObject.page.streamObj.ImageObject;
-import de.agsayan.pdfLib.pdfObject.page.streamObj.TextObject;
-
 public class App {
   public static void main(String[] args) {
+    try {
+      App.createPDF();
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
 
     IndirectObject indirectObject = new IndirectObject(1);
     System.out.println(indirectObject.toString());
@@ -49,20 +55,39 @@ public class App {
     String resourceFile = resourceURL.getFile();
     String generatedPdfFile = "/home/agsayan/Downloads/test.pdf";
 
-    InputStream is = new FileInputStream(resourceFile);
-    JSONTokener tokener = new JSONTokener(is);
-
-    JSONObject object = new JSONObject(tokener);
-    JSONArray jsonArray = object.getJSONArray("test");
+    int numberOfPages = 1;
 
     PDF pdf = new PDF(generatedPdfFile);
     pdf.addCatalog();
-    pdf.addPagesCollection(jsonArray.length());
-    App.writePDFFromJson(pdf, jsonArray);
+    pdf.addPagesCollection(numberOfPages);
+
+    int textSize = 10;
+    boolean isCursive = false;
+    boolean isBold = true;
+    boolean isUnderlined = false;
+    String textFont = "Times-Roman";
+    String textColor = "0,0,0";
+    String text = "Hello World";
+
+    PageObject page = new PageObject(PageFormat.valueOf("A4"));
+    TextObject txtObj = new TextObject();
+    txtObj.setText(text, textSize);
+    txtObj.setCursive(isCursive);
+    txtObj.setBold(isBold);
+    txtObj.setUnderlined(isUnderlined);
+    txtObj.setTextColor(textColor);
+    txtObj.setTextFont(textFont);
+    txtObj.setPosition(page, 100, 100);
+
+    page.addStreamObjects("Font", txtObj);
+    page.addStreamContent(txtObj);
+    page.setParentReference("2 0 R");
+
+    pdf.addPage(page);
     pdf.createPDF();
-    is.close();
   }
 
+  // TODO: ONLY FOR TESTING
   public static void writePDFFromJson(PDF pdf, JSONArray array) {
     for (int i = 0; i < array.length(); i++) {
       JSONObject obj = array.getJSONObject(i);

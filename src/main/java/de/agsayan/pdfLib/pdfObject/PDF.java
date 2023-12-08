@@ -82,6 +82,7 @@ public class PDF {
         os.write("\nendstream".getBytes());
 
       } else {
+        System.out.println(pdfObjects.get(i));
         os.write(pdfObjects.get(i).getBytes());
       }
 
@@ -93,7 +94,7 @@ public class PDF {
   private void writeHeader() throws IOException { os.write(HEADER.getBytes()); }
 
   public void addCatalog() {
-    DictionaryObject dictionaryObject = new DictionaryObject();
+    DictionaryObject<Object> dictionaryObject = new DictionaryObject<Object>();
     dictionaryObject.putItem("Pages", "2 0 R");
     dictionaryObject.putItem("Type", new NameObject("Catalog"));
 
@@ -106,12 +107,12 @@ public class PDF {
     pdfObjects.add(page.generateStream() + "\n");
   }
 
-  public void addPagesCollection(int count) {
-    DictionaryObject dictionary = new DictionaryObject();
-    ArrayObject array = new ArrayObject();
+  public void addPagesCollection(int numberOfPages) {
+    DictionaryObject<Object> dictionary = new DictionaryObject<Object>();
+    ArrayObject<Object> array = new ArrayObject<Object>();
     int t = 3;
 
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < numberOfPages; i++) {
       array.add((i + t));
       array.add(0);
       array.add("R");
@@ -119,14 +120,14 @@ public class PDF {
     }
 
     dictionary.putItem("Type", new NameObject("Pages"));
-    dictionary.putItem("Count", count);
+    dictionary.putItem("Count", numberOfPages);
     dictionary.putItem("Kids", array);
 
     pdfObjects.add(dictionary.toString());
   }
 
   public void writeTrailer(int size) throws IOException {
-    DictionaryObject dictionary = new DictionaryObject();
+    DictionaryObject<Object> dictionary = new DictionaryObject<Object>();
     dictionary.putItem("Root", "1 0 R");
     dictionary.putItem("Size", size);
 

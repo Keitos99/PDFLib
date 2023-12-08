@@ -5,6 +5,7 @@
         "pageNum": 1,
         "objectList": [
             {
+                "name": "text",
                 "textCursive": "false",
                 "borderTop": "true",
                 "leftFrameColor": "128,128,128",
@@ -33,7 +34,6 @@
                 "borderRight": "true",
                 "textAlignment": "left",
                 "textBold": "true",
-                "name": "text",
                 "width": 61.376,
                 "rightFrameWidth": 0,
                 "backgroundOn": "true",
