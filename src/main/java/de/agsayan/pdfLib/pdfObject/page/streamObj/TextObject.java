@@ -11,7 +11,7 @@ public class TextObject extends StreamObject {
   private static final String END_TEXT = "ET";
   private static final String TEXT_FONT = "Tf";
   private static final String TEXT_OFFSET = "TD";
-  private static final String SHOW_TEXT = "TJ";
+  private static final String SHOW_TEXT = "Tj";
 
   private String text;
   private String textAlignment;
