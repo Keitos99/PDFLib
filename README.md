@@ -1,3 +1,3 @@
 # PDFLib
-Program to generate pdf files.  
-Wrote to understand how the pdf format works.
+Program to generate PDF files.
+Written to understand how the PDF format works.
